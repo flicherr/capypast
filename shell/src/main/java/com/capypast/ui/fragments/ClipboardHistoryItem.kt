@@ -1,15 +1,9 @@
 package com.capypast.ui.fragments
 
-import android.annotation.SuppressLint
-import android.content.ClipData
 import android.graphics.BitmapFactory
 import android.icu.text.DateFormat
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.InteractionSource
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,15 +27,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.Star
-import androidx.compose.material3.Surface
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.ClipEntry
-import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -50,8 +40,6 @@ import com.capypast.room.ClipType
 import com.capypast.room.ClipboardEntity
 import java.sql.Date
 
-
-@SuppressLint("UnrememberedMutableInteractionSource")
 @Composable
 fun ClipboardHistoryItem(
     entity: ClipboardEntity,
@@ -113,18 +101,6 @@ fun ClipboardHistoryItem(
             Spacer(Modifier.height(12.dp))
 
             // ───────────── Контент ─────────────
-//            Surface(
-//                onClick = {
-//
-//                },
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .background(Color.Transparent)
-//                    .hoverable(
-//                        interactionSource = MutableInteractionSource(),
-//                        enabled = false
-//                    )
-//            ) {
             when (entity.type) {
                 ClipType.TEXT -> {
                     Text(
@@ -159,7 +135,6 @@ fun ClipboardHistoryItem(
                     }
                 }
             }
-//            }
 
             // ───────────── Теги ─────────────
             if (entity.tags.isNotBlank()) {

@@ -1,12 +1,9 @@
 package com.capypast
 
-import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
@@ -14,7 +11,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.capypast.room.ClipboardDatabase
 import com.capypast.room.ClipboardRepository
-import com.capypast.service.ClipboardMonitorService
 import com.capypast.ui.fragments.ThemedBackground
 import com.capypast.ui.screens.Main
 import com.capypast.ui.screens.Settings
@@ -28,9 +24,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
-        val svcIntent = Intent(this, ClipboardMonitorService::class.java)
-        startForegroundService(svcIntent)
 
         val db = ClipboardDatabase.Companion.getInstance(applicationContext)
         val dao = db.clipboardDao()

@@ -13,34 +13,17 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.capypast.viewmodel.ClipboardViewModel
-import com.capypast.room.ClipboardDatabase
-import com.capypast.room.ClipboardRepository
-import com.capypast.viewmodel.ClipboardViewModelFactory
 
 @Composable
 fun History(
     viewModel: ClipboardViewModel
 ) {
-//    val context = LocalContext.current
-//    // один раз получаем репозиторий
-//    val repository = remember {
-//        val db = ClipboardDatabase.getInstance(context)
-//        ClipboardRepository(db.clipboardDao())
-//    }
-//    // получаем VM через нашу фабрику
-//    val viewModel: ClipboardViewModel = viewModel(
-//        factory = ClipboardViewModelFactory(repository)
-//    )
-
     val items = viewModel.itemsFlow
         .collectAsLazyPagingItems()
 
