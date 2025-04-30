@@ -17,9 +17,8 @@
         <service
             android:name=".service.ClipboardMonitorService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
-            android:process=":clipboard_monitor"
-            android:stopWithTask="false"
-            android:exported="false">
+            android:exported="true"
+            android:process=":clipboard_monitor">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService"/>
             </intent-filter>

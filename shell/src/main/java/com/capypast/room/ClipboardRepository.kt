@@ -19,4 +19,14 @@ class ClipboardRepository(private val dao: ClipboardDao) {
     suspend fun delete(clip: ClipboardEntity) = dao.delete(clip)
 
     suspend fun clear() = dao.clear()
+
+    suspend fun findByText(content: String) = dao.existingItemText(content)
+
+    suspend fun findByImage(imagePath: String) = dao.existingItemImg(imagePath)
+
+    suspend fun getLastClip() = dao.getLastClip()
+
+    suspend fun updateTimestamp(clip: ClipboardEntity, newTimestamp: Long) {
+        dao.insert(clip.copy(timestamp = newTimestamp))
+    }
 }
