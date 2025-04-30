@@ -22,7 +22,7 @@ class ClipboardRepository(private val dao: ClipboardDao) {
 
     suspend fun findByText(content: String) = dao.existingItemText(content)
 
-    suspend fun findByImage(imagePath: String) = dao.existingItemImg(imagePath)
+//    suspend fun findByImage(imagePath: String) = dao.existingItemImg(imagePath)
 
     suspend fun getLastClip() = dao.getLastClip()
 

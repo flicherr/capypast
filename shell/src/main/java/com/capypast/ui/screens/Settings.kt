@@ -1,5 +1,6 @@
 package com.capypast.ui.screens
 
+import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Delete
@@ -32,6 +34,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.capypast.ui.appbar.ButtonBack
 import com.capypast.ui.appbar.TitleAppBar
+import android.provider.Settings
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +63,14 @@ fun Settings(
             Column(
               modifier = Modifier.padding(horizontal = 10.dp)
             ) {
+                val context = LocalContext.current
 //                ActionButton({}, "синхронизация", Icons.Rounded.Refresh)
+                ActionButton({
+                    val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    context.startActivity(intent)
+                }, "включить мониторинг", Icons.Rounded.Build)
                 ActionButton(onClickToTrashcan, "корзина", Icons.Rounded.Delete)
                 ActionButton({}, "экспорт истории", Icons.Rounded.Share)
                 ActionButton({}, "очистить историю", Icons.Rounded.Clear)

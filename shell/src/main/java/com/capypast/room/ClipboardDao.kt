@@ -32,9 +32,9 @@ interface ClipboardDao {
     @Query("SELECT * FROM clipboard WHERE content = :content LIMIT 1")
     suspend fun existingItemText(content: String): ClipboardEntity?
 
-    // Поиск дубликатов по тексту
-    @Query("SELECT * FROM clipboard WHERE content = :imagePath LIMIT 1")
-    suspend fun existingItemImg(imagePath: String): ClipboardEntity?
+//    // Поиск дубликатов по картинке
+//    @Query("SELECT * FROM clipboard WHERE content = :imagePath LIMIT 1")
+//    suspend fun existingItemImg(imagePath: String): ClipboardEntity?
 
     // Получение последней записи
     @Query("SELECT * FROM clipboard ORDER BY timestamp DESC LIMIT 1")

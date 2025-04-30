@@ -11,6 +11,9 @@ import com.capypast.room.ClipboardEntity
 import com.capypast.room.ClipType
 import com.capypast.room.ClipboardRepository
 import kotlinx.coroutines.*
+import java.io.File
+import java.io.FileOutputStream
+import java.security.MessageDigest
 
 //class ClipboardMonitorrService : Service() {
 //
@@ -287,6 +290,7 @@ class ClipboardMonitorService : AccessibilityService() {
                 Log.d(TAG, "AccessibilityEvent: фокус переключён на другой элемент")
                 // (Дополнительная логика при необходимости)
             }
+            else -> return
         }
     }
 
@@ -349,32 +353,34 @@ class ClipboardMonitorService : AccessibilityService() {
                                 type = ClipType.TEXT,
                                 content = copiedText,
                                 imagePath = null,
-                                tags = ""
+                                tags = "помурчать"
                             )
                         )
                         Log.d(TAG, "Добавлена новая текстовая запись в историю")
                     }
                 } else if (copiedUri != null) {
-                    // Представляем URI как строку для хранения. Можно также сохранить изображение побайтово.
-                    val uriString = copiedUri.toString()
-                    val existingItem = repository.findByImage(uriString)
-                    if (existingItem != null) {
-                        // Дубликат изображения найден
-                        repository.updateTimestamp(existingItem, currentTime)
-                        Log.d(TAG, "Обновлена отметка времени для существующей записи изображения")
+                    val lastItem = repository.getLastClip()
+                    val copiedImg = File(copiedUri.toString())
+                    var lastItemImg = if (lastItem != null) {
+                        File(lastItem.imagePath.toString())
                     } else {
+                        null
+                    }
+
+                    // Првоерка текущего изображения с последним clip'ом истории буфера обмена
+                    if (lastItemImg == null || !imgAreIdentical(copiedImg, lastItemImg)) {
+                        val path = saveImageAndGetPath(item.uri!!)
                         // Новая запись с URI изображения
                         repository.insert(
                             ClipboardEntity(
                                 timestamp = currentTime,
                                 type = ClipType.IMAGE,
                                 content = null,
-                                imagePath = copiedUri.toString(),
-                                tags = ""
+                                imagePath = path,
+                                tags = "поцарапать"
                             )
                         )
                         Log.d(TAG, "Добавлена новая запись изображения в историю")
-                        // (*) Опционально: можно здесь же выполнить сохранение самого изображения во внутреннее хранилище
                     }
                 }
             } catch (e: Exception) {
@@ -382,6 +388,35 @@ class ClipboardMonitorService : AccessibilityService() {
                 Log.e(TAG, "Ошибка при сохранении элемента буфера в базу: ${e.message}", e)
             }
         }
+    }
+
+    /** Сохраняет URI-картинку в cache-dir и возвращает путь к файлу */
+    private fun saveImageAndGetPath(uri: Uri): String? {
+        return try {
+            val filename = "clip_${System.currentTimeMillis()}.png"
+            // кладём во внутренний cache (можно использовать filesDir)
+            val file = File(cacheDir, filename)
+            contentResolver.openInputStream(uri)?.use { input ->
+                FileOutputStream(file).use { output ->
+                    input.copyTo(output)
+                }
+            }
+            file.absolutePath
+        } catch (e: Exception) {
+            Log.e("ClipService", "Error saving image", e)
+            null
+        }
+    }
+
+    fun File.sha256(): String {
+        val bytes = MessageDigest
+            .getInstance("SHA-256")
+            .digest(this.readBytes())
+        return bytes.joinToString("") { "%02x".format(it) }
+    }
+
+    fun imgAreIdentical(file1: File, file2: File): Boolean {
+        return file1.sha256() == file2.sha256()
     }
 
     override fun onInterrupt() {
