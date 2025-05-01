@@ -1,4 +1,4 @@
-package com.capypast.ui.fragments
+package com.capypast.ui.theme
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme

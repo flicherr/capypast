@@ -1,4 +1,4 @@
-package com.capypast.ui.fragments
+package com.capypast.ui.screens.trashcan
 
 import android.graphics.BitmapFactory
 import android.icu.text.DateFormat
@@ -15,18 +15,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Card
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,14 +31,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.capypast.room.ClipType
-import com.capypast.room.ClipboardEntity
+import com.capypast.room.entities.ClipType
+import com.capypast.room.entities.TrashEntity
+import compose.icons.TablerIcons
+import compose.icons.tablericons.CircleX
+import compose.icons.tablericons.LetterCase
+import compose.icons.tablericons.Photo
+import compose.icons.tablericons.RotateClockwise2
 import java.sql.Date
 
 @Composable
-fun ClipboardHistoryItem(
-    entity: ClipboardEntity,
-    onDelete: (ClipboardEntity) -> Unit
+fun TrashItem(
+    entity: TrashEntity,
+    onRestore: (TrashEntity) -> Unit,
+    onDelete: (TrashEntity) -> Unit,
 ) {
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -65,8 +66,8 @@ fun ClipboardHistoryItem(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = when (entity.type) {
-                            ClipType.TEXT -> Icons.Rounded.FavoriteBorder
-                            ClipType.IMAGE -> Icons.Default.Favorite
+                            ClipType.TEXT -> TablerIcons.LetterCase
+                            ClipType.IMAGE -> TablerIcons.Photo
                         },
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primary,
@@ -83,15 +84,16 @@ fun ClipboardHistoryItem(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.End
                 ) {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { onRestore(entity) }) {
                         Icon(
-                            imageVector = Icons.Rounded.Star,
-                            contentDescription = "Закрепить",
+                            imageVector = TablerIcons.RotateClockwise2,
+                            contentDescription = "Восстановить",
                         )
                     }
+
                     IconButton(onClick = { onDelete(entity) }) {
                         Icon(
-                            imageVector = Icons.Rounded.Delete,
+                            imageVector = TablerIcons.CircleX,
                             contentDescription = "Удалить",
                         )
                     }

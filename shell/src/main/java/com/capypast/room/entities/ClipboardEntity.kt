@@ -1,20 +1,9 @@
-package com.capypast.room
+package com.capypast.room.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
-
-enum class ClipType {
-    TEXT,
-    IMAGE
-}
-
-class ClipTypeConverter {
-    @TypeConverter fun fromEnum(type: ClipType): String = type.name
-    @TypeConverter fun toEnum(type: String): ClipType = ClipType.valueOf(type)
-}
 
 @Entity(
     tableName = "clipboard",
@@ -28,7 +17,8 @@ data class ClipboardEntity(
     val timestamp: Long,
     val type: ClipType,
     val content: String?,
-    @ColumnInfo(name = "image_path")
-    val imagePath: String?,
-    val tags: String = ""
+    @ColumnInfo(name = "image_path") val imagePath: String?,
+    val tags: String = "",
+    val pinned: Boolean = false,
+    val protected: Boolean = false
 )

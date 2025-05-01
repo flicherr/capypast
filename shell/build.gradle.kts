@@ -50,11 +50,13 @@ android {
 }
 
 dependencies {
+    implementation("br.com.devsrsouza.compose.icons:tabler-icons:1.1.1")
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.paging)
     implementation(libs.room.ktx)
+    //noinspection KaptUsageInsteadOfKsp
     kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.core.ktx)

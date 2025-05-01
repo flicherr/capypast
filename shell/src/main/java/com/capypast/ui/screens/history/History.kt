@@ -1,4 +1,4 @@
-package com.capypast.ui.screens
+package com.capypast.ui.screens.history
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,24 +17,29 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capypast.R
 import com.capypast.room.ClipboardDatabase
-import com.capypast.room.ClipboardRepository
-import com.capypast.ui.appbar.AppBar
-import com.capypast.ui.fragments.History
+import com.capypast.room.interactors.MoveToTrashInteractor
+import com.capypast.room.repositories.ClipboardRepository
+import com.capypast.room.repositories.TrashRepository
 import com.capypast.viewmodel.ClipboardViewModel
-import com.capypast.viewmodel.ClipboardViewModelFactory
+import com.capypast.viewmodel.factories.ClipboardViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Main(
+fun History(
     onClickToSettings: () -> Unit
 ) {
     val context = LocalContext.current
+    val db = ClipboardDatabase.getInstance(context)
     val repository = remember {
-        val db = ClipboardDatabase.getInstance(context)
         ClipboardRepository(db.clipboardDao())
     }
+    val toTrash = MoveToTrashInteractor(
+        clipboardRepo = repository,
+        trashRepo = TrashRepository(db.trashDao()),
+        db = db,
+    )
     val viewModel: ClipboardViewModel = viewModel(
-        factory = ClipboardViewModelFactory(repository)
+        factory = ClipboardViewModelFactory(repository, toTrash)
     )
 
     Surface(
@@ -46,15 +51,15 @@ fun Main(
         Column {
             AppBar(
                 title = stringResource(R.string.app_name),
-                onSettingsClick = onClickToSettings,
-                onSearch = { query -> viewModel.search(query) }
+                onClickToSettings = onClickToSettings,
+                onClickToSearch = { query -> viewModel.search(query) }
             )
             HorizontalDivider(
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
             )
 
-            History(viewModel)
+            HistoryList(viewModel)
         }
     }
 }
