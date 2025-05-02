@@ -20,7 +20,7 @@ interface ClipboardDao {
 
 	@Transaction
 	suspend fun upsert(clip: ClipboardEntity) {
-		val existing = existingItemText(clip.content!!)
+		val existing = existingItemText(clip.content)
 		if (existing != null) {
 			update(existing.copy(timestamp = clip.timestamp))
 		} else {

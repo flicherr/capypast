@@ -137,7 +137,8 @@ fun ButtonBack(onClick: () -> Unit) {
 		Icon(
 			TablerIcons.ArrowLeft,
 			contentDescription = "Назад",
-			modifier = Modifier.size(28.dp)
+			modifier = Modifier.size(28.dp),
+			tint = MaterialTheme.colorScheme.primary
 		)
 	}
 }

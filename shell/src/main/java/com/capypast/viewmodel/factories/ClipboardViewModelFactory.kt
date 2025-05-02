@@ -5,9 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.capypast.room.ClipboardDatabase
 import com.capypast.room.interactors.MoveToTrashInteractor
-import com.capypast.room.interactors.RestoreFromTrashInteractor
 import com.capypast.room.repositories.ClipboardRepository
-import com.capypast.room.repositories.TrashRepository
 import com.capypast.viewmodel.ClipboardViewModel
 
 class ClipboardViewModelFactory(

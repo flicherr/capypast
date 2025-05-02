@@ -66,7 +66,7 @@ class ClipboardMonitorService : AccessibilityService() {
 		when (event.eventType) {
 			AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED -> {
 				// Проверяем текст события на признак копирования в буфер
-				val textList = event.text ?: return
+				val textList = event.text
 				val eventText = textList.joinToString()
 				if (eventText.contains("Copied to clipboard", ignoreCase = true)) {
 					// Обнаружен Toast "Copied to clipboard"
