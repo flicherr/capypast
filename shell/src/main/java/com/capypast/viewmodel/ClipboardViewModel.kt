@@ -14,44 +14,42 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class ClipboardViewModel(
-    private val repository: ClipboardRepository,
-    private val moveToTrashInteractor: MoveToTrashInteractor
+	private val repository: ClipboardRepository,
+	private val interactor: MoveToTrashInteractor
 ) : ViewModel() {
 
-    private val currentQuery = MutableStateFlow<String?>(null)
+	private val currentQuery = MutableStateFlow<String?>(null)
 
-    fun insert(clip: ClipboardEntity) {
-        viewModelScope.launch {
-            repository.insert(clip)
-        }
-    }
+	fun moveToTrash(clip: ClipboardEntity) {
+		viewModelScope.launch {
+			interactor(clip)
+		}
+	}
 
-    fun moveToTrash(clip: ClipboardEntity) {
-        viewModelScope.launch {
-            moveToTrashInteractor(clip)
-        }
-    }
+	fun setPinned(clip: ClipboardEntity) {
+		viewModelScope.launch {
+			repository.setPinned(clip.id, !clip.pinned)
+		}
+	}
 
-    fun setPinned(clip: ClipboardEntity) {
-        viewModelScope.launch {
-            repository.setPinned(clip.id, !clip.pinned)
-        }
-    }
+	fun setProtected(clip: ClipboardEntity) {
+		viewModelScope.launch {
+			repository.setProtected(clip.id, !clip.isProtected)
+		}
+	}
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val itemsFlow: Flow<PagingData<ClipboardEntity>> = currentQuery
-        .flatMapLatest { query ->
-            if (query.isNullOrBlank()) {
-                repository.getHistoryFlow().flow
-            } else {
-                repository.searchFlow(query).flow
-            }
-        }
-        .cachedIn(viewModelScope)
+	@OptIn(ExperimentalCoroutinesApi::class)
+	val itemsFlow: Flow<PagingData<ClipboardEntity>> = currentQuery
+		.flatMapLatest { query ->
+			if (query.isNullOrBlank()) {
+				repository.getHistoryFlow().flow
+			} else {
+				repository.searchFlow(query).flow
+			}
+		}
+		.cachedIn(viewModelScope)
 
-
-
-    fun search(query: String) {
-        currentQuery.value = query
-    }
+	fun search(query: String) {
+		currentQuery.value = query
+	}
 }

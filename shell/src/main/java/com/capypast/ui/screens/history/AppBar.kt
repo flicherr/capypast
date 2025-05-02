@@ -36,67 +36,67 @@ import compose.icons.tablericons.Search
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(
-    title: String,
-    onClickToSettings: () -> Unit,
-    onClickToSearch: (String) -> Unit,
+	title: String,
+	onClickToSettings: () -> Unit,
+	onClickToSearch: (String) -> Unit,
 ) {
-    var isSearchActive by remember { mutableStateOf(false) }
-    var query by remember { mutableStateOf("") }
+	var isSearchActive by remember { mutableStateOf(false) }
+	var query by remember { mutableStateOf("") }
 
-    val focusRequester = remember { FocusRequester() }
-    val keyboardCtrl = LocalSoftwareKeyboardController.current
+	val focusRequester = remember { FocusRequester() }
+	val keyboardCtrl = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(isSearchActive) {
-        if (isSearchActive) {
-            focusRequester.requestFocus()
-            keyboardCtrl?.show()
-        } else {
-            keyboardCtrl?.hide()
-            query = ""
-        }
-    }
-    TopAppBar(
-        title = {
-            if (isSearchActive) {
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = { query = it },
-                    placeholder = { Text("поиск…") },
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester)
-                        .clip(RoundedCornerShape(12.dp)),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        unfocusedBorderColor = Color.Transparent,
-                        focusedBorderColor = Color.Transparent,
-                        cursorColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    leadingIcon = {
-                        Icon(
-                            TablerIcons.Search, null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                    keyboardActions = KeyboardActions(onSearch = {
-                        onClickToSearch(query)
-                        isSearchActive = false
-                    })
-                )
-            } else {
-                TitleAppBar(title)
-            }
-        },
-        actions = {
-            if (isSearchActive) {
-                ButtonCloseSearch{ isSearchActive = false }
-            } else {
-                ButtonSearch { isSearchActive = true }
-                ButtonToSettings(onClickToSettings)
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
-    )
+	LaunchedEffect(isSearchActive) {
+		if (isSearchActive) {
+			focusRequester.requestFocus()
+			keyboardCtrl?.show()
+		} else {
+			keyboardCtrl?.hide()
+			query = ""
+		}
+	}
+	TopAppBar(
+		title = {
+			if (isSearchActive) {
+				OutlinedTextField(
+					value = query,
+					onValueChange = { query = it },
+					placeholder = { Text("поиск…") },
+					singleLine = true,
+					modifier = Modifier
+						.fillMaxWidth()
+						.focusRequester(focusRequester)
+						.clip(RoundedCornerShape(12.dp)),
+					shape = RoundedCornerShape(12.dp),
+					colors = OutlinedTextFieldDefaults.colors(
+						unfocusedBorderColor = Color.Transparent,
+						focusedBorderColor = Color.Transparent,
+						cursorColor = MaterialTheme.colorScheme.primary,
+					),
+					leadingIcon = {
+						Icon(
+							TablerIcons.Search, null,
+							tint = MaterialTheme.colorScheme.primary
+						)
+					},
+					keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+					keyboardActions = KeyboardActions(onSearch = {
+						onClickToSearch(query)
+						isSearchActive = false
+					})
+				)
+			} else {
+				TitleAppBar(title)
+			}
+		},
+		actions = {
+			if (isSearchActive) {
+				ButtonCloseSearch{ isSearchActive = false }
+			} else {
+				ButtonSearch { isSearchActive = true }
+				ButtonToSettings(onClickToSettings)
+			}
+		},
+		colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
+	)
 }

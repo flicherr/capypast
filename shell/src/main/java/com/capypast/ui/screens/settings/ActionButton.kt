@@ -20,27 +20,27 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ActionButton(onClick: () -> Unit, title: String, icon: ImageVector) {
-    Surface(
-        shape = RoundedCornerShape(8.dp),
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .clickable { onClick() }
-                .padding(horizontal = 4.dp, vertical = 14.dp)
-                .fillMaxWidth()
-        ) {
+	Surface(
+		shape = RoundedCornerShape(8.dp),
+	) {
+		Row(
+			verticalAlignment = Alignment.CenterVertically,
+			modifier = Modifier
+				.clickable { onClick() }
+				.padding(horizontal = 4.dp, vertical = 14.dp)
+				.fillMaxWidth()
+		) {
 
-            IconButton(onClick = onClick) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = title,
-                    modifier = Modifier.size(28.dp),
-                )
-            }
-            Spacer(modifier = Modifier.width(14.dp))
+			IconButton(onClick = onClick) {
+				Icon(
+					imageVector = icon,
+					contentDescription = title,
+					modifier = Modifier.size(28.dp),
+				)
+			}
+			Spacer(modifier = Modifier.width(14.dp))
 
-            Text(title)
-        }
-    }
+			Text(title)
+		}
+	}
 }

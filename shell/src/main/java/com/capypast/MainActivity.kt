@@ -14,35 +14,35 @@ import com.capypast.ui.screens.trashcan.Trashcan
 import com.capypast.ui.theme.CapypastTheme
 
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            val navCtrl = rememberNavController()
+	override fun onCreate(savedInstanceState: Bundle?) {
+		super.onCreate(savedInstanceState)
+		enableEdgeToEdge()
+		setContent {
+			val navCtrl = rememberNavController()
 
-            CapypastTheme {
-                ThemedBackground()
+			CapypastTheme {
+				ThemedBackground()
 
-                NavHost(
-                    navController = navCtrl,
-                    startDestination = "main",
-                ) {
-                    composable("main") {
-                        History { navCtrl.navigate("settings") }
-                    }
-                    composable("settings") {
-                        Settings(
-                            onClickToTrashcan = { navCtrl.navigate("trashcan") },
-                            onClickToBack = { navCtrl.popBackStack() },
-                        )
-                    }
-                    composable("trashcan") {
-                        Trashcan {
-                            navCtrl.popBackStack()
-                        }
-                    }
-                }
-            }
-        }
-    }
+				NavHost(
+					navController = navCtrl,
+					startDestination = "main",
+				) {
+					composable("main") {
+						History { navCtrl.navigate("settings") }
+					}
+					composable("settings") {
+						Settings(
+							onClickToTrashcan = { navCtrl.navigate("trashcan") },
+							onClickToBack = { navCtrl.popBackStack() },
+						)
+					}
+					composable("trashcan") {
+						Trashcan {
+							navCtrl.popBackStack()
+						}
+					}
+				}
+			}
+		}
+	}
 }

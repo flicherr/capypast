@@ -19,29 +19,29 @@ import com.capypast.ui.components.TitleAppBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(
-    title: String,
-    onClickToTrashcan: () -> Unit,
-    onClickToBack: () -> Unit,
+	title: String,
+	onClickToTrashcan: () -> Unit,
+	onClickToBack: () -> Unit,
 ) {
-    var isSearchActive by remember { mutableStateOf(false) }
-    var query by remember { mutableStateOf("") }
+	var isSearchActive by remember { mutableStateOf(false) }
+	var query by remember { mutableStateOf("") }
 
-    val focusRequester = remember { FocusRequester() }
-    val keyboardCtrl = LocalSoftwareKeyboardController.current
+	val focusRequester = remember { FocusRequester() }
+	val keyboardCtrl = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(isSearchActive) {
-        if (isSearchActive) {
-            focusRequester.requestFocus()
-            keyboardCtrl?.show()
-        } else {
-            keyboardCtrl?.hide()
-            query = ""
-        }
-    }
-    TopAppBar(
-        navigationIcon = { ButtonBack(onClickToBack) },
-        title = { TitleAppBar(title) },
-        actions = { ButtonToTrashcan(onClickToTrashcan) },
-        colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
-    )
+	LaunchedEffect(isSearchActive) {
+		if (isSearchActive) {
+			focusRequester.requestFocus()
+			keyboardCtrl?.show()
+		} else {
+			keyboardCtrl?.hide()
+			query = ""
+		}
+	}
+	TopAppBar(
+		navigationIcon = { ButtonBack(onClickToBack) },
+		title = { TitleAppBar(title) },
+		actions = { ButtonToTrashcan(onClickToTrashcan) },
+		colors = TopAppBarDefaults.topAppBarColors(Color.Transparent),
+	)
 }

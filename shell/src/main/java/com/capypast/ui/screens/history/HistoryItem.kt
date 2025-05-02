@@ -38,132 +38,154 @@ import compose.icons.tablericons.Copy
 import compose.icons.tablericons.LetterCase
 import compose.icons.tablericons.Photo
 import compose.icons.tablericons.Pin
+import compose.icons.tablericons.Pinned
 import compose.icons.tablericons.Trash
 import java.sql.Date
 
 @Composable
 fun HistoryItem(
-    entity: ClipboardEntity,
-    onPinned: (ClipboardEntity) -> Unit,
-    onDelete: (ClipboardEntity) -> Unit,
+	entity: ClipboardEntity,
+	onPinned: (ClipboardEntity) -> Unit,
+	onDelete: (ClipboardEntity) -> Unit,
 ) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 0.dp, vertical = 8.dp),
-    ) {
-        Column(Modifier.padding(14.dp)) {
-            /** ───────────── Заголовок: иконка, дата и кнопка удаления ───────────── */
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = when (entity.type) {
-                            ClipType.TEXT -> TablerIcons.LetterCase
-                            ClipType.IMAGE -> TablerIcons.Photo
-                        },
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = DateFormat.getDateTimeInstance()
-                            .format(Date(entity.timestamp)),
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    IconButton(onClick = {  }) {
-                        Icon(
-                            imageVector = TablerIcons.Copy,
-                            contentDescription = "Копировать",
-                        )
-                    }
-
-//                    IconButton(onClick = {  }) {
+	Card(
+		shape = RoundedCornerShape(12.dp),
+		elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+		colors = CardDefaults.cardColors(
+			containerColor = MaterialTheme.colorScheme.surface
+		),
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(vertical = 4.dp)
+	) {
+		Column(
+			modifier = Modifier
+				.padding(vertical = 4.dp, horizontal = 10.dp)
+		) {
+			/** ───────────── Заголовок: иконка, дата и кнопка удаления ───────────── */
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween,
+				modifier = Modifier.fillMaxWidth()
+			) {
+				Row(
+					verticalAlignment = Alignment.CenterVertically
+				) {
+					Icon(
+						imageVector = when (entity.type) {
+							ClipType.TEXT -> TablerIcons.LetterCase
+							ClipType.IMAGE -> TablerIcons.Photo
+						},
+						contentDescription = null,
+						tint = MaterialTheme.colorScheme.primary,
+						modifier = Modifier.size(20.dp)
+					)
+					Spacer(Modifier.width(8.dp))
+					Text(
+						text = DateFormat.getDateTimeInstance()
+							.format(Date(entity.timestamp)),
+						style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+					)
+				}
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.End
+				) {
+					IconButton(onClick = {  }) {
+						Icon(
+							imageVector = TablerIcons.Copy,
+							contentDescription = "Копировать",
+						)
+					}
+//                    IconButton(onClick = { onProtected(entity) }) {
 //                        Icon(
 //                            imageVector = TablerIcons.DotsVertical ,
 //                            contentDescription = "Управлять",
 //                        )
 //                    }
-                    IconButton(onClick = { onPinned }) {
-                        Icon(
-                            imageVector = TablerIcons.Pin ,
-                            contentDescription = "Закреп",
-                        )
-                    }
+					IconButton(onClick = { onPinned(entity) }) {
+						Icon(
+							imageVector = TablerIcons.Pinned ,
+							contentDescription = "Закреп",
+						)
+					}
 //                    IconButton(onClick = {  }) {
 //                        Icon(
 //                            imageVector = TablerIcons.Shield ,
 //                            contentDescription = "Защищённый доступ",
 //                        )
 //                    }
-                    IconButton(onClick = { onDelete(entity) }) {
-                        Icon(
-                            imageVector = TablerIcons.Trash,
-                            contentDescription = "В корзину",
-                        )
-                    }
-                }
-            }
+					IconButton(onClick = { onDelete(entity) }) {
+						Icon(
+							imageVector = TablerIcons.Trash,
+							contentDescription = "В корзину",
+						)
+					}
+				}
+			}
+			Spacer(Modifier.height(12.dp))
 
-            Spacer(Modifier.height(12.dp))
-            /** ────────────────────────────── Контент ────────────────────────────── */
-            when (entity.type) {
-                ClipType.TEXT -> {
-                    Text(
-                        text = entity.content.orEmpty(),
-                        style = MaterialTheme.typography.titleMedium,
-                        lineHeight = 20.sp,
-                        maxLines = 5,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+			/** ────────────────────────────── Контент ────────────────────────────── */
+			when (entity.type) {
+				ClipType.TEXT -> {
+					Text(
+						text = entity.content,
+						style = MaterialTheme.typography.titleMedium,
+						lineHeight = 20.sp,
+						maxLines = 5,
+						overflow = TextOverflow.Ellipsis
+					)
+				}
 
-                ClipType.IMAGE -> {
-                    entity.imagePath?.let { path ->
-                        val bitmap = BitmapFactory.decodeFile(path)
-                        Image(
-                            bitmap = bitmap.asImageBitmap(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = 100.dp, max = 200.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .border(
-                                    1.dp,
-                                    MaterialTheme
-                                        .colorScheme
-                                        .onSurface
-                                        .copy(alpha = 0.1f),
-                                    RoundedCornerShape(8.dp)
-                                )
-                        )
-                    }
-                }
-            }
-            /** ──────────────────────────────── Теги ──────────────────────────────── */
-            if (entity.tags.isNotBlank()) {
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = "#${entity.tags}",
-                    style = MaterialTheme.typography.labelSmall
-                        .copy(color = MaterialTheme.colorScheme.primary)
-                )
-            }
-        }
-    }
+				ClipType.IMAGE -> {
+					entity.content.let { path ->
+						val bitmap = BitmapFactory.decodeFile(path)
+						Image(
+							bitmap = bitmap.asImageBitmap(),
+							contentDescription = null,
+							contentScale = ContentScale.Crop,
+							modifier = Modifier
+								.fillMaxWidth()
+								.heightIn(min = 100.dp, max = 200.dp)
+								.clip(RoundedCornerShape(8.dp))
+								.border(
+									1.dp,
+									MaterialTheme
+										.colorScheme
+										.onSurface
+										.copy(alpha = 0.1f),
+									RoundedCornerShape(8.dp)
+								)
+						)
+					}
+				}
+			}
+			/** ──────────────────────────────── Теги ──────────────────────────────── */
+			if (entity.tags.isNotBlank()) {
+				Spacer(Modifier.height(12.dp))
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+				) {
+					Text(
+						text = "#${entity.tags}",
+						style = MaterialTheme.typography.labelSmall
+							.copy(color = MaterialTheme.colorScheme.primary)
+					)
+					if (entity.pinned) {
+						Column(
+							horizontalAlignment = Alignment.End,
+							modifier = Modifier.fillMaxWidth()
+						) {
+							Icon(
+								TablerIcons.Pin,
+								contentDescription = "Закреплён",
+								modifier = Modifier.size(18.dp),
+								tint = MaterialTheme.colorScheme.primary
+							)
+						}
+					}
+				}
+			}
+		}
+	}
 }

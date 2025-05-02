@@ -11,15 +11,15 @@ import com.capypast.R
 
 @Composable
 fun ThemedBackground(
-    modifier: Modifier = Modifier,
+	modifier: Modifier = Modifier,
 ) {
-    val backgroundPainter = painterResource(
-        id = if (isSystemInDarkTheme()) R.drawable.bg_dark else R.drawable.bg_light
-    )
-    Image(
-        painter = backgroundPainter,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = modifier.fillMaxSize()
-    )
+	val backgroundPainter = painterResource(
+		id = if (isSystemInDarkTheme()) R.drawable.bg_dark else R.drawable.bg_light
+	)
+	Image(
+		painter = backgroundPainter,
+		contentDescription = null,
+		contentScale = ContentScale.Crop,
+		modifier = modifier.fillMaxSize()
+	)
 }

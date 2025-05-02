@@ -6,19 +6,18 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "clipboard",
-    indices = [
-        Index(value = ["content"]),
-        Index(value = ["tags"])
-    ]
+	tableName = "clipboard",
+	indices = [
+		Index(value = ["content"]),
+		Index(value = ["tags"])
+	]
 )
 data class ClipboardEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val timestamp: Long,
-    val type: ClipType,
-    val content: String?,
-    @ColumnInfo(name = "image_path") val imagePath: String?,
-    val tags: String = "",
-    val pinned: Boolean = false,
-    val protected: Boolean = false
+	@PrimaryKey(autoGenerate = true) val id: Long = 0,
+	val timestamp: Long,
+	val type: ClipType,
+	val content: String,
+	val pinned: Boolean = false,
+	@ColumnInfo(name = "protected") val isProtected: Boolean = false,
+	val tags: String = ""
 )

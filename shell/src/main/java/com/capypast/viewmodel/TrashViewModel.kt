@@ -13,42 +13,51 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class TrashViewModel(
-    private val trashRepository: TrashRepository,
-    private val restore: RestoreFromTrashInteractor,
-    ) : ViewModel() {
+	private val repository: TrashRepository,
+	private val interactor: RestoreFromTrashInteractor
+) : ViewModel() {
 
-    val trashPagingData: StateFlow<PagingData<TrashEntity>> =
-        trashRepository
-            .getTrashFlow()
-            .flow
-            .cachedIn(viewModelScope)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.Lazily,
-                initialValue = PagingData.empty()
-            )
+	val trashPagingData: StateFlow<PagingData<TrashEntity>> =
+		repository
+			.getTrashFlow()
+			.flow
+			.cachedIn(viewModelScope)
+			.stateIn(
+				scope = viewModelScope,
+				started = SharingStarted.Lazily,
+				initialValue = PagingData.empty()
+			)
 
-    fun onRestore(trashItem: TrashEntity) {
-        viewModelScope.launch {
-            restore(trashItem)
-        }
-    }
+	val enabledTrash: StateFlow<Boolean> = repository
+		.exists()
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted
+				.WhileSubscribed(5_000),
+			initialValue = false
+		)
 
-    fun onRestoreAll() {
-        viewModelScope.launch {
-            restore()
-        }
-    }
+	fun onRestore(trashItem: TrashEntity) {
+		viewModelScope.launch {
+			interactor(trashItem)
+		}
+	}
 
-    fun onDelete(trashItem: TrashEntity) {
-        viewModelScope.launch {
-            trashRepository.delete(trashItem)
-        }
-    }
+	fun onRestoreAll() {
+		viewModelScope.launch {
+			interactor()
+		}
+	}
 
-    fun onClearAll() {
-        viewModelScope.launch {
-            trashRepository.clear()
-        }
-    }
+	fun onDelete(trashItem: TrashEntity) {
+		viewModelScope.launch {
+			repository.delete(trashItem)
+		}
+	}
+
+	fun onClearAll() {
+		viewModelScope.launch {
+			repository.clear()
+		}
+	}
 }

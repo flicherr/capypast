@@ -42,111 +42,113 @@ import java.sql.Date
 
 @Composable
 fun TrashItem(
-    entity: TrashEntity,
-    onRestore: (TrashEntity) -> Unit,
-    onDelete: (TrashEntity) -> Unit,
+	entity: TrashEntity,
+	onRestore: (TrashEntity) -> Unit,
+	onDelete: (TrashEntity) -> Unit,
 ) {
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 0.dp, vertical = 8.dp),
-    ) {
-        Column(Modifier.padding(14.dp)) {
-            // ───────────── Заголовок: иконка, дата и кнопка удаления ─────────────
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = when (entity.type) {
-                            ClipType.TEXT -> TablerIcons.LetterCase
-                            ClipType.IMAGE -> TablerIcons.Photo
-                        },
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        text = DateFormat.getDateTimeInstance()
-                            .format(Date(entity.timestamp)),
-                        style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
-                    )
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    IconButton(onClick = { onRestore(entity) }) {
-                        Icon(
-                            imageVector = TablerIcons.RotateClockwise2,
-                            contentDescription = "Восстановить",
-                        )
-                    }
+	Card(
+		shape = RoundedCornerShape(12.dp),
+		elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+		colors = CardDefaults.cardColors(
+			containerColor = MaterialTheme.colorScheme.surface
+		),
+		modifier = Modifier
+			.fillMaxWidth()
+			.padding(vertical = 4.dp)
+	) {
+		Column(
+			modifier = Modifier
+				.padding(vertical = 4.dp, horizontal = 10.dp)
+		) {
+			/** ───────────── Заголовок: иконка, дата и кнопка удаления ───────────── */
+			Row(
+				verticalAlignment = Alignment.CenterVertically,
+				horizontalArrangement = Arrangement.SpaceBetween,
+				modifier = Modifier.fillMaxWidth()
+			) {
+				Row(verticalAlignment = Alignment.CenterVertically) {
+					Icon(
+						imageVector = when (entity.type) {
+							ClipType.TEXT -> TablerIcons.LetterCase
+							ClipType.IMAGE -> TablerIcons.Photo
+						},
+						contentDescription = null,
+						tint = MaterialTheme.colorScheme.primary,
+						modifier = Modifier.size(20.dp)
+					)
+					Spacer(Modifier.width(8.dp))
+					Text(
+						text = DateFormat.getDateTimeInstance()
+							.format(Date(entity.timestamp)),
+						style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+					)
+				}
+				Row(
+					verticalAlignment = Alignment.CenterVertically,
+					horizontalArrangement = Arrangement.End
+				) {
+					IconButton(onClick = { onRestore(entity) }) {
+						Icon(
+							imageVector = TablerIcons.RotateClockwise2,
+							contentDescription = "Восстановить",
+						)
+					}
 
-                    IconButton(onClick = { onDelete(entity) }) {
-                        Icon(
-                            imageVector = TablerIcons.CircleX,
-                            contentDescription = "Удалить",
-                        )
-                    }
-                }
-            }
+					IconButton(onClick = { onDelete(entity) }) {
+						Icon(
+							imageVector = TablerIcons.CircleX,
+							contentDescription = "Удалить",
+						)
+					}
+				}
+			}
+			Spacer(Modifier.height(12.dp))
 
-            Spacer(Modifier.height(12.dp))
+			/** ────────────────────────────── Контент ────────────────────────────── */
+			when (entity.type) {
+				ClipType.TEXT -> {
+					Text(
+						text = entity.content,
+						style = MaterialTheme.typography.titleMedium,
+						lineHeight = 20.sp,
+						maxLines = 5,
+						overflow = TextOverflow.Ellipsis
+					)
+				}
 
-            // ───────────── Контент ─────────────
-            when (entity.type) {
-                ClipType.TEXT -> {
-                    Text(
-                        text = entity.content.orEmpty(),
-                        style = MaterialTheme.typography.titleMedium,
-                        lineHeight = 20.sp,
-                        maxLines = 5,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+				ClipType.IMAGE -> {
+					entity.content.let { path ->
+						val bitmap = BitmapFactory.decodeFile(path)
+						Image(
+							bitmap = bitmap.asImageBitmap(),
+							contentDescription = null,
+							contentScale = ContentScale.Crop,
+							modifier = Modifier
+								.fillMaxWidth()
+								.heightIn(min = 100.dp, max = 200.dp)
+								.clip(RoundedCornerShape(8.dp))
+								.border(
+									1.dp,
+									MaterialTheme
+										.colorScheme
+										.onSurface
+										.copy(alpha = 0.1f),
+									RoundedCornerShape(8.dp)
+								)
+						)
+					}
+				}
+			}
 
-                ClipType.IMAGE -> {
-                    entity.imagePath?.let { path ->
-                        val bitmap = BitmapFactory.decodeFile(path)
-                        Image(
-                            bitmap = bitmap.asImageBitmap(),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(min = 100.dp, max = 200.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .border(
-                                    1.dp,
-                                    MaterialTheme
-                                        .colorScheme
-                                        .onSurface
-                                        .copy(alpha = 0.1f),
-                                    RoundedCornerShape(8.dp)
-                                )
-                        )
-                    }
-                }
-            }
-
-            // ───────────── Теги ─────────────
-            if (entity.tags.isNotBlank()) {
-                Spacer(Modifier.height(12.dp))
-                Text(
-                    text = "#${entity.tags}",
-                    style = MaterialTheme.typography.labelSmall
-                        .copy(color = MaterialTheme.colorScheme.primary)
-                )
-            }
-        }
-    }
+			/** ──────────────────────────────── Теги ──────────────────────────────── */
+			if (entity.tags.isNotBlank()) {
+				Spacer(Modifier.height(12.dp))
+				Text(
+					text = "#${entity.tags}",
+					style = MaterialTheme.typography.labelSmall
+						.copy(color = MaterialTheme.colorScheme.primary)
+				)
+			}
+		}
+	}
 }
