@@ -18,27 +18,38 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.capypast.room.entities.ClipType
 import com.capypast.room.entities.ClipboardEntity
+import com.capypast.ui.utils.clipCopy
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Copy
+import compose.icons.tablericons.DotsVertical
 import compose.icons.tablericons.LetterCase
 import compose.icons.tablericons.Photo
 import compose.icons.tablericons.Pin
 import compose.icons.tablericons.Pinned
+import compose.icons.tablericons.PinnedOff
+import compose.icons.tablericons.Shield
+import compose.icons.tablericons.ShieldX
 import compose.icons.tablericons.Trash
 import java.sql.Date
 
@@ -46,8 +57,11 @@ import java.sql.Date
 fun HistoryItem(
 	entity: ClipboardEntity,
 	onPinned: (ClipboardEntity) -> Unit,
-	onDelete: (ClipboardEntity) -> Unit,
+	onProtected: (ClipboardEntity) -> Unit,
+	onDelete: (ClipboardEntity) -> Unit
 ) {
+	var menuExpanded by remember { mutableStateOf(false) }
+
 	Card(
 		shape = RoundedCornerShape(12.dp),
 		elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -63,6 +77,8 @@ fun HistoryItem(
 				.padding(vertical = 4.dp, horizontal = 10.dp)
 		) {
 			/** ───────────── Заголовок: иконка, дата и кнопка удаления ───────────── */
+			val context = LocalContext.current
+
 			Row(
 				verticalAlignment = Alignment.CenterVertically,
 				horizontalArrangement = Arrangement.SpaceBetween,
@@ -91,35 +107,77 @@ fun HistoryItem(
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.End
 				) {
-					IconButton(onClick = {  }) {
+					IconButton(
+						onClick = {
+							clipCopy(
+								context = context,
+								content = entity.content,
+								type = entity.type
+							)
+						}
+					) {
 						Icon(
 							imageVector = TablerIcons.Copy,
 							contentDescription = "Копировать",
 						)
 					}
-//                    IconButton(onClick = { onProtected(entity) }) {
-//                        Icon(
-//                            imageVector = TablerIcons.DotsVertical ,
-//                            contentDescription = "Управлять",
-//                        )
-//                    }
-					IconButton(onClick = { onPinned(entity) }) {
-						Icon(
-							imageVector = TablerIcons.Pinned ,
-							contentDescription = "Закреп",
-						)
-					}
-//                    IconButton(onClick = {  }) {
-//                        Icon(
-//                            imageVector = TablerIcons.Shield ,
-//                            contentDescription = "Защищённый доступ",
-//                        )
-//                    }
-					IconButton(onClick = { onDelete(entity) }) {
-						Icon(
-							imageVector = TablerIcons.Trash,
-							contentDescription = "В корзину",
-						)
+
+                    IconButton(onClick = { menuExpanded = true }) {
+                        Icon(
+                            imageVector = TablerIcons.DotsVertical,
+                            contentDescription = "Отхер...",
+                        )
+                    }
+
+					DropdownMenu(
+						expanded = menuExpanded,
+						onDismissRequest = { menuExpanded = false }
+					) {
+						Row {
+							IconButton(
+								onClick = {
+									onPinned(entity)
+									menuExpanded = false
+								}
+							) {
+								Icon(
+									imageVector = if (!entity.pinned) {
+										TablerIcons.Pinned
+									} else {
+										TablerIcons.PinnedOff
+									},
+									contentDescription = "Закреп",
+								)
+							}
+
+							IconButton(
+								onClick = {
+									onProtected(entity)
+									menuExpanded = false
+								}
+							) {
+								Icon(
+									imageVector = if (!entity.isProtected) {
+										TablerIcons.Shield
+									} else {
+										TablerIcons.ShieldX
+									},
+									contentDescription = "Защищённый доступ",
+								)
+							}
+
+							IconButton(
+								onClick = {
+									onDelete(entity)
+									menuExpanded = false
+								}
+							) {
+								Icon(
+									imageVector = TablerIcons.Trash,
+									contentDescription = "В корзину",
+								)
+							}
+						}
 					}
 				}
 			}

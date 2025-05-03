@@ -30,7 +30,8 @@ import com.capypast.viewmodel.ClipboardViewModel
 fun HistoryList(viewModel: ClipboardViewModel) {
 
 	val listState = rememberLazyListState()
-	val items = viewModel.itemsFlow
+	val items = viewModel
+		.itemsFlow
 		.collectAsLazyPagingItems()
 	var prevCount by remember { mutableIntStateOf(0) }
 
@@ -66,8 +67,11 @@ fun HistoryList(viewModel: ClipboardViewModel) {
 			entity?.let {
 				HistoryItem(
 					entity = it,
-					onPinned = { toChangePinned ->
-						viewModel.setPinned(toChangePinned)
+					onPinned = { toSetPinned ->
+						viewModel.setPinned(toSetPinned)
+					},
+					onProtected = { toSetProtected ->
+						viewModel.setProtected(toSetProtected)
 					},
 					onDelete = { toTrash ->
 						viewModel.moveToTrash(toTrash)

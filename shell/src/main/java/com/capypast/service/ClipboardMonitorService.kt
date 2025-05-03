@@ -16,29 +16,22 @@ import java.io.FileOutputStream
 import java.security.MessageDigest
 
 class ClipboardMonitorService : AccessibilityService() {
-
 	private val TAG = "ClipboardMonitorService"
 
-	// Менеджер буфера обмена и слушатель изменений
 	private lateinit var clipboardManager: ClipboardManager
 	private val clipChangedListener = ClipboardManager.OnPrimaryClipChangedListener {
-		// Этот метод вызывается при изменении буфера (на Android < 10 или если приложение в фокусе)
 		Log.d(TAG, "OnPrimaryClipChangedListener: буфер обмена изменился")
-		handleClipboardContent()  // обработка нового содержимого
+		handleClipboardContent()
 	}
 
-	// Экземпляр базы данных и DAO для доступа к истории
 	private lateinit var database: ClipboardDatabase
 	private lateinit var repository: ClipboardRepository
 
 	override fun onCreate() {
 		super.onCreate()
-		// Инициализация базы данных (Room) один раз при запуске сервиса
 		database = ClipboardDatabase.getInstance(this)
 		repository = ClipboardRepository(database.clipboardDao())
 
-
-		// Получаем системный ClipboardManager и регистрируем слушатель изменений
 		clipboardManager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
 		clipboardManager.addPrimaryClipChangedListener(clipChangedListener)
 
@@ -99,41 +92,32 @@ class ClipboardMonitorService : AccessibilityService() {
 		if (clip.itemCount < 1) return
 
 		val item = clip.getItemAt(0)
-		// Переменные для извлечённого содержимого
 		var copiedText: String? = null
 		var copiedUri: Uri? = null
 
-		// Определяем тип содержимого
 		when {
 			item.text != null -> {
-				// Буфер содержит текст (ClipData со строкой)
 				copiedText = item.text.toString()
 				Log.d(TAG, "Скопирован текст: $copiedText")
 			}
 			item.uri != null -> {
-				// Буфер содержит URI (возможно, изображение или файл)
 				copiedUri = item.uri
 				Log.d(TAG, "Скопирован URI: $copiedUri")
 			}
 			item.intent != null -> {
-				// Необычный случай: в буфере Intent (например, скопирован в панель Share)
-				// Для простоты обрабатываем как текстовое представление Intent
 				copiedText = item.intent.toUri(0)
 				Log.d(TAG, "Скопирован Intent (URI представление): $copiedText")
 			}
 			else -> {
-				// Неизвестный тип данных
 				Log.w(TAG, "Не удалось определить тип скопированных данных")
 				return
 			}
 		}
 
-		// Сохраняем данные в историю через DAO
 		val currentTime = System.currentTimeMillis()
 		CoroutineScope(Dispatchers.IO).launch {
 			try {
 				if (copiedText != null) {
-					// Проверка дубликата по тексту
 					repository.upsert(
 						ClipboardEntity(
 							timestamp = currentTime,
@@ -142,7 +126,6 @@ class ClipboardMonitorService : AccessibilityService() {
 							tags = "помурчать"
 						)
 					)
-					Log.d(TAG, "Добавлена новая текстовая запись в историю")
 				} else if (copiedUri != null) {
 					val lastItem = repository.getLastClip()
 					val copiedImg = File(copiedUri.toString())
@@ -152,7 +135,6 @@ class ClipboardMonitorService : AccessibilityService() {
 						null
 					}
 
-					// Првоерка текущего изображения с последним clip'ом истории буфера обмена
 					if (lastItemImg == null || !imgAreIdentical(copiedImg, lastItemImg)) {
 						val path = saveImageAndGetPath(item.uri!!).toString()
 						repository.insert(
@@ -163,27 +145,25 @@ class ClipboardMonitorService : AccessibilityService() {
 								tags = "поцарапать"
 							)
 						)
-						Log.d(TAG, "Добавлена новая запись изображения в историю")
 					}
 				}
 			} catch (e: Exception) {
-				// Обработка ошибок работы с базой данных или данных буфера
 				Log.e(TAG, "Ошибка при сохранении элемента буфера в базу: ${e.message}", e)
 			}
 		}
 	}
 
-	/** Сохраняет URI-картинку в cache-dir и возвращает путь к файлу */
 	private fun saveImageAndGetPath(uri: Uri): String? {
 		return try {
 			val filename = "clip_${System.currentTimeMillis()}.png"
-			// кладём во внутренний cache (можно использовать filesDir)
 			val file = File(filesDir, filename)
+
 			contentResolver.openInputStream(uri)?.use { input ->
 				FileOutputStream(file).use { output ->
 					input.copyTo(output)
 				}
 			}
+
 			file.absolutePath
 		} catch (e: Exception) {
 			Log.e("ClipService", "Error saving image", e)
@@ -203,15 +183,12 @@ class ClipboardMonitorService : AccessibilityService() {
 	}
 
 	override fun onInterrupt() {
-		// Метод вызывается при необходимости прервать работу сервиса (не используется в данном контексте)
 		Log.i(TAG, "onInterrupt вызван")
 	}
 
 	override fun onDestroy() {
 		super.onDestroy()
-		// Убираем слушатель изменений буфера обмена, чтобы избежать утечки памяти
 		clipboardManager.removePrimaryClipChangedListener(clipChangedListener)
-		// Закрываем базу данных
 		database.close()
 		Log.i(TAG, "Сервис уничтожен: слушатели сняты, база данных закрыта")
 	}

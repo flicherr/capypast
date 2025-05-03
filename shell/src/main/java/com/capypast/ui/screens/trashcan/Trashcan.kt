@@ -19,11 +19,6 @@ fun Trashcan(
 	onClickToBack: () -> Unit
 ) {
 	val context = LocalContext.current
-//    val db = ClipboardDatabase.getInstance(context)
-//    val repository = remember {
-//        TrashRepository(db.trashDao())
-//    }
-//    val restore = RestoreFromTrashInteractor(db = db)
 	val viewModel: TrashViewModel = viewModel(
 		factory = TrashViewModelFactory(context)
 	)
