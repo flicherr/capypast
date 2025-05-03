@@ -2,6 +2,7 @@ package com.capypast.service
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
+import android.content.ClipData
 import android.content.ClipboardManager
 import android.net.Uri
 import android.util.Log
@@ -10,6 +11,7 @@ import com.capypast.room.ClipboardDatabase
 import com.capypast.room.entities.ClipboardEntity
 import com.capypast.room.entities.ClipType
 import com.capypast.room.repositories.ClipboardRepository
+import com.capypast.utils.copiedClipLabel
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
@@ -61,7 +63,7 @@ class ClipboardMonitorService : AccessibilityService() {
 				// Проверяем текст события на признак копирования в буфер
 				val textList = event.text
 				val eventText = textList.joinToString()
-				if (eventText.contains("Copied to clipboard", ignoreCase = true)) {
+				if (eventText.contains("Текст скопирован в буфер обмена.", ignoreCase = true)) {
 					// Обнаружен Toast "Copied to clipboard"
 					Log.d(TAG, "AccessibilityEvent: обнаружено копирование (Toast 'Copied to clipboard')")
 					handleClipboardContent()
@@ -88,8 +90,9 @@ class ClipboardMonitorService : AccessibilityService() {
 	 * и сохраняет в базу данных (с проверкой дубликатов).
 	 */
 	private fun handleClipboardContent() {
-		val clip = clipboardManager.primaryClip ?: return  // если буфер пустой или недоступен
+		val clip = clipboardManager.primaryClip ?: return
 		if (clip.itemCount < 1) return
+		if (isCopyClipHistory(clip)) return
 
 		val item = clip.getItemAt(0)
 		var copiedText: String? = null
@@ -152,6 +155,10 @@ class ClipboardMonitorService : AccessibilityService() {
 			}
 		}
 	}
+
+	private fun isCopyClipHistory(clip: ClipData): Boolean =
+		clip.description.label == copiedClipLabel
+
 
 	private fun saveImageAndGetPath(uri: Uri): String? {
 		return try {

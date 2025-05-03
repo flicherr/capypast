@@ -2,6 +2,7 @@ package com.capypast.ui.screens.history
 
 import android.graphics.BitmapFactory
 import android.icu.text.DateFormat
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -39,7 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.capypast.room.entities.ClipType
 import com.capypast.room.entities.ClipboardEntity
-import com.capypast.ui.utils.clipCopy
+import com.capypast.utils.clipCopy
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Copy
 import compose.icons.tablericons.DotsVertical
@@ -100,7 +101,10 @@ fun HistoryItem(
 					Text(
 						text = DateFormat.getDateTimeInstance()
 							.format(Date(entity.timestamp)),
-						style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+						style = MaterialTheme
+							.typography
+							.bodySmall
+							.copy(fontWeight = FontWeight.Medium)
 					)
 				}
 				Row(
@@ -114,6 +118,13 @@ fun HistoryItem(
 								content = entity.content,
 								type = entity.type
 							)
+							Toast
+								.makeText(
+									context,
+									"скопировано.",
+									Toast.LENGTH_SHORT
+								)
+								.show()
 						}
 					) {
 						Icon(

@@ -1,4 +1,4 @@
-package com.capypast.ui.utils
+package com.capypast.utils
 
 import com.capypast.room.entities.ClipboardEntity
 

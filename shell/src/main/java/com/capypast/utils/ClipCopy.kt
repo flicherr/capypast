@@ -1,13 +1,13 @@
-package com.capypast.ui.utils
+package com.capypast.utils
 
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
-import android.net.Uri
-import android.widget.Toast
+import androidx.core.net.toUri
 import com.capypast.room.entities.ClipType
-import java.io.File
+
+const val copiedClipLabel = "ыаъъыуаъуыъ"
 
 fun clipCopy(
 	context: Context,
@@ -22,28 +22,18 @@ fun clipCopy(
 			ClipType.TEXT -> {
 				ClipData
 					.newPlainText(
-						"ыаъъыуаъуыъ",
+						copiedClipLabel,
 						content
 					)
 			}
-
 			ClipType.IMAGE -> {
 				ClipData
 					.newUri(
 						context.contentResolver,
-						"ъиооъиъиоъи",
-						Uri.fromFile(
-							File(content)
-						)
+						copiedClipLabel,
+						content.toUri()
 					)
 			}
 		}
 	)
-	Toast
-		.makeText(
-			context,
-			"Содержимое скопировано!",
-			Toast.LENGTH_SHORT
-		)
-		.show()
 }
