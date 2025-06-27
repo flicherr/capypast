@@ -13,13 +13,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class TrashViewModel(
-	private val repository: TrashRepository,
-	private val interactor: RestoreFromTrashInteractor
+	private val repo: TrashRepository,
+	private val restoreInteract: RestoreFromTrashInteractor
 ) : ViewModel() {
-
 	val trashPagingData: StateFlow<PagingData<TrashEntity>> =
-		repository
-			.getTrashFlow()
+		repo
+			.trashFlow()
 			.flow
 			.cachedIn(viewModelScope)
 			.stateIn(
@@ -28,7 +27,7 @@ class TrashViewModel(
 				initialValue = PagingData.empty()
 			)
 
-	val enabledTrash: StateFlow<Boolean> = repository
+	val enabledTrash: StateFlow<Boolean> = repo
 		.exists()
 		.stateIn(
 			scope = viewModelScope,
@@ -37,27 +36,27 @@ class TrashViewModel(
 			initialValue = false
 		)
 
-	fun onRestore(trashItem: TrashEntity) {
+	fun restore(trashItem: TrashEntity) {
 		viewModelScope.launch {
-			interactor(trashItem)
+			restoreInteract(trashItem)
 		}
 	}
 
-	fun onRestoreAll() {
+	fun restoreAll() {
 		viewModelScope.launch {
-			interactor()
+			restoreInteract()
 		}
 	}
 
-	fun onDelete(trashItem: TrashEntity) {
+	fun delete(trashItem: TrashEntity) {
 		viewModelScope.launch {
-			repository.delete(trashItem)
+			repo.delete(trashItem)
 		}
 	}
 
-	fun onClearAll() {
+	fun deleteAll() {
 		viewModelScope.launch {
-			repository.clear()
+			repo.clear()
 		}
 	}
 }

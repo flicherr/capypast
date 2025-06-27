@@ -3,4 +3,6 @@
     <string name="main">puck</string>
     <string name="settings">settings</string>
     <string name="trashcan">trashcan</string>
+    <string name="clipboard_monitor_desc">Служба для фонового мониторинга действий копирования в системный буфер обмена текстовой и графической информации</string>
+
 </resources>

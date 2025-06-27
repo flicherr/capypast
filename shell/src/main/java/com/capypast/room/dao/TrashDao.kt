@@ -21,10 +21,13 @@ interface TrashDao {
 	fun exists(): Flow<Boolean>
 
 	@Query("SELECT * FROM trash ORDER BY timestamp DESC")
-	fun getAllPaged(): PagingSource<Int, TrashEntity>
+	fun allPaged(): PagingSource<Int, TrashEntity>
 
 	@Query("SELECT * FROM trash")
-	suspend fun getAllItems(): List<TrashEntity>
+	suspend fun allItems(): List<TrashEntity>
+
+	@Insert(onConflict = OnConflictStrategy.REPLACE)
+	suspend fun insertSome(items: List<TrashEntity>)
 
 	@Query("DELETE FROM trash")
 	suspend fun clear()

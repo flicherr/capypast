@@ -5,21 +5,21 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.capypast.room.dao.ClipboardDao
+import com.capypast.room.dao.ClipDao
 import com.capypast.room.dao.TrashDao
 import com.capypast.room.entities.ClipTypeConverter
-import com.capypast.room.entities.ClipboardEntity
+import com.capypast.room.entities.ClipEntity
 import com.capypast.room.entities.TrashEntity
 
 @Database(
-	entities = [ClipboardEntity::class, TrashEntity::class],
+	entities = [ClipEntity::class, TrashEntity::class],
 	version = 1,
 	exportSchema = false,
 )
 @TypeConverters(ClipTypeConverter::class)
 abstract class ClipboardDatabase : RoomDatabase() {
 
-	abstract fun clipboardDao(): ClipboardDao
+	abstract fun clipDao(): ClipDao
 	abstract fun trashDao(): TrashDao
 
 	companion object {

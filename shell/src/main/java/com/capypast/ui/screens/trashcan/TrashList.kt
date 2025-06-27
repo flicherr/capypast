@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,14 +22,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.capypast.ui.screens.history.textItems
+import com.capypast.ui.screens.clipboard.textItems
 import com.capypast.viewmodel.TrashViewModel
+import com.capypast.viewmodel.factories.TrashViewModelFactory
 
 @Composable
-fun TrashList(viewModel: TrashViewModel) {
+fun TrashList() {
+	val context = LocalContext.current
+	val viewModel: TrashViewModel = viewModel(
+		factory = TrashViewModelFactory(context)
+	)
 
 	val listState = rememberLazyListState()
 	val items = viewModel.trashPagingData
@@ -46,8 +54,8 @@ fun TrashList(viewModel: TrashViewModel) {
 		state = listState,
 		contentPadding = PaddingValues(horizontal = 20.dp),
 		verticalArrangement = Arrangement.spacedBy(4.dp),
-		modifier = Modifier
-			.padding(PaddingValues(bottom = 16.dp))
+//		modifier = Modifier
+//			.padding(PaddingValues(bottom = 16.dp))
 	) {
 		item {
 			Text(
@@ -68,11 +76,11 @@ fun TrashList(viewModel: TrashViewModel) {
 				TrashItem(
 					entity = it,
 					onRestore = { toRestore ->
-						viewModel.onRestore(toRestore)
+						viewModel.restore(toRestore)
 					},
 					onDelete = { toDelete ->
-						viewModel.onDelete(toDelete)
-					}
+						viewModel.delete(toDelete)
+					},
 				)
 			}
 		}
@@ -100,7 +108,7 @@ fun TrashList(viewModel: TrashViewModel) {
 					)
 				}
 
-				else -> {} // нет состояния
+				else -> {}
 			}
 		}
 	}

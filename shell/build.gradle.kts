@@ -1,4 +1,5 @@
 import org.gradle.api.JavaVersion.VERSION_17
+import org.gradle.kotlin.dsl.implementation
 
 plugins {
     alias(libs.plugins.android.application)
@@ -54,6 +55,15 @@ android {
 
 dependencies {
     implementation("br.com.devsrsouza.compose.icons:tabler-icons:1.1.1")
+    implementation("com.google.code.gson:gson:2.10.1")
+
+    implementation(libs.androidx.appcompat)
+    implementation("androidx.biometric:biometric:1.1.0")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
+    implementation("androidx.savedstate:savedstate:1.3.0")
+    implementation("androidx.compose.ui:ui:1.8.3")
 
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)

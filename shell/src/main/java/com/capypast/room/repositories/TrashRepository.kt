@@ -17,8 +17,8 @@ class TrashRepository(
 
 	suspend fun clear() = dao.clear()
 
-	fun getTrashFlow(): Pager<Int, TrashEntity> = Pager(
+	fun trashFlow(): Pager<Int, TrashEntity> = Pager(
 		config = PagingConfig(pageSize = 20),
-		pagingSourceFactory = { dao.getAllPaged() }
+		pagingSourceFactory = { dao.allPaged() }
 	)
 }

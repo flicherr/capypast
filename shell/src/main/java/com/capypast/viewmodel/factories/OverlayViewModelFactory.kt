@@ -4,25 +4,22 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.capypast.room.ClipboardDatabase
-import com.capypast.room.interactors.MoveToTrashInteractor
 import com.capypast.room.repositories.ClipboardRepository
-import com.capypast.viewmodel.ClipboardViewModel
+import com.capypast.viewmodel.OverlayViewModel
 
-class ClipboardViewModelFactory(
+class OverlayViewModelFactory(
 	private val context: Context
 ) : ViewModelProvider.Factory {
 
 	@Suppress("UNCHECKED_CAST")
 	override fun <T : ViewModel> create(modelClass: Class<T>): T {
-		if (modelClass.isAssignableFrom(ClipboardViewModel::class.java)) {
+		if (modelClass.isAssignableFrom(OverlayViewModel::class.java)) {
 			val db = ClipboardDatabase
-				.getInstance(context)
-			val repo = ClipboardRepository(db.clipDao())
-			val interact = MoveToTrashInteractor(db = db)
+				.getInstance(context.applicationContext)
+			val repository = ClipboardRepository(db.clipDao())
 
-			return ClipboardViewModel(repo, interact) as T
+			return OverlayViewModel(repository) as T
 		}
-
 		throw IllegalArgumentException("Unknown ViewModel class: $modelClass")
 	}
 }
