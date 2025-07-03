@@ -2,15 +2,11 @@ package com.capypast.ui.screens.clipboard
 
 import android.annotation.SuppressLint
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,10 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,51 +26,39 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.capypast.helper.BiometricAuthHelper
 import com.capypast.room.entities.ClipType
-import com.capypast.service.overlay.OverlayActivity
-import com.capypast.utils.authenticate
 import com.capypast.utils.clipShare
-import com.capypast.utils.setPrimaryClip
 import com.capypast.viewmodel.ClipboardViewModel
-import com.capypast.viewmodel.factories.ClipboardViewModelFactory
 import compose.icons.TablerIcons
 import compose.icons.tablericons.LetterCase
 import compose.icons.tablericons.Photo
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import java.nio.file.WatchEvent
+import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ClipList() {
 	val context = LocalContext.current
-	val viewModel: ClipboardViewModel = viewModel(
-		factory = ClipboardViewModelFactory(context)
-	)
+
+	val viewModel: ClipboardViewModel = koinViewModel()
 
 	val listState = rememberLazyListState()
 	val items = viewModel
@@ -136,9 +117,11 @@ fun ClipList() {
 						Spacer(Modifier.width(8.dp))
 						Text("текст")
 					},
-					modifier = Modifier.width(150.dp),
+					modifier = Modifier.width(164.dp),
 					colors = FilterChipDefaults
-						.filterChipColors(selectedContainerColor = MaterialTheme.colorScheme.surface),
+						.filterChipColors(
+							selectedContainerColor = MaterialTheme.colorScheme.surface
+						),
 				)
 
 				Spacer(Modifier.width(8.dp))
@@ -155,9 +138,11 @@ fun ClipList() {
 						Spacer(Modifier.width(8.dp))
 						Text("изображения")
 					},
-					modifier = Modifier.width(150.dp),
+					modifier = Modifier.width(164.dp),
 					colors = FilterChipDefaults
-						.filterChipColors(selectedContainerColor = MaterialTheme.colorScheme.surface),
+						.filterChipColors(
+							selectedContainerColor = MaterialTheme.colorScheme.surface
+						),
 				)
 			}
 		}
@@ -201,7 +186,9 @@ fun ClipList() {
 						onClick = {
 							if (viewModel.selectionMode()) {
 								viewModel.toggleSelection(clip)
-							} else if (entity.isProtected && !viewModel.protectedClips.contains(entity)) {
+							} else if (entity.isProtected &&
+								!viewModel.protectedClips.contains(entity)
+							) {
 								biometricAuthenticator.authenticate(
 									onSuccess = {
 										viewModel.addReadAccessClip(entity)
@@ -215,7 +202,9 @@ fun ClipList() {
 										viewModel.clearReadAccessClips()
 									}
 								)
-							} else if (entity.isProtected && viewModel.protectedClips.contains(entity)) {
+							} else if (entity.isProtected &&
+								viewModel.protectedClips.contains(entity)
+							) {
 								viewModel.removeReadAccessClip(clip)
 							}
 						},

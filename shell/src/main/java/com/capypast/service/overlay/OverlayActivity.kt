@@ -4,28 +4,16 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStore
 import com.capypast.helper.BiometricAuthHelper
-import com.capypast.room.entities.ClipType
-//import com.capypast.service.MonitorServiceHolder
 import com.capypast.ui.overlay.OverlayWindow
 import com.capypast.ui.theme.CapypastTheme
 import com.capypast.utils.setPrimaryClip
 import com.capypast.viewmodel.OverlayViewModel
-import com.capypast.viewmodel.factories.OverlayViewModelFactory
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class OverlayActivity : FragmentActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,10 +34,7 @@ class OverlayActivity : FragmentActivity() {
 		}
 
 		setContent {
-			val viewModel = ViewModelProvider(
-				ViewModelStore(),
-				OverlayViewModelFactory(this@OverlayActivity)
-			)[OverlayViewModel::class.java]
+			val viewModel: OverlayViewModel by viewModel()
 
 			val context = LocalContext.current
 			val activity = context as? FragmentActivity ?: return@setContent

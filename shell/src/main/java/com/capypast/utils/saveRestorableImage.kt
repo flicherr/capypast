@@ -5,7 +5,7 @@ import android.net.Uri
 import java.io.File
 import java.io.InputStream
 
-suspend fun saveImage(filename: String, input: InputStream, context: Context): Uri {
+fun saveImage(filename: String, input: InputStream, context: Context): Uri {
 	val dir = File(context.filesDir, "images")
 	if (!dir.exists()) dir.mkdirs()
 

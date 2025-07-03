@@ -2,15 +2,19 @@ package com.capypast.room.interactors
 
 import androidx.room.withTransaction
 import com.capypast.room.ClipboardDatabase
+import com.capypast.room.dao.ClipDao
+import com.capypast.room.dao.TrashDao
 import com.capypast.room.entities.ClipEntity
 import com.capypast.room.entities.TrashEntity
 
 class RestoreFromTrashInteractor(
-	private val db: ClipboardDatabase
+	private val db: ClipboardDatabase,
+	private val clipDao: ClipDao,
+	private val trashDao: TrashDao,
 ) {
 	suspend operator fun invoke() = db.withTransaction {
-		val allTrash = db.trashDao().allItems()
-		db.trashDao().clear()
+		val allTrash = trashDao.allItems()
+		trashDao.clear()
 		allTrash.forEach { trash ->
 			val clip = ClipEntity(
 				timestamp   = trash.historyTimestamp,
@@ -20,13 +24,13 @@ class RestoreFromTrashInteractor(
 				isProtected   = trash.isProtected,
 				tags        = trash.tags,
 			)
-			db.clipDao().insert(clip)
+			clipDao.insert(clip)
 		}
 	}
 
 	suspend operator fun invoke(trash: TrashEntity) {
 		db.withTransaction {
-			db.trashDao().delete(trash)
+			trashDao.delete(trash)
 			val clip = ClipEntity(
 				timestamp   = trash.historyTimestamp,
 				type        = trash.type,
@@ -35,7 +39,7 @@ class RestoreFromTrashInteractor(
 				isProtected   = trash.isProtected,
 				tags        = trash.tags,
 			)
-			db.clipDao().insert(clip)
+			clipDao.insert(clip)
 		}
 	}
 }

@@ -9,13 +9,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarVisuals
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -23,7 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
-import com.capypast.room.ClipboardDatabase
+import androidx.core.net.toUri
 import com.capypast.room.interactors.ExportBackupInteractor
 import com.capypast.room.interactors.ImportBackupInteractor
 import compose.icons.TablerIcons
@@ -31,6 +29,7 @@ import compose.icons.tablericons.DatabaseExport
 import compose.icons.tablericons.DatabaseImport
 import compose.icons.tablericons.Settings
 import kotlinx.coroutines.launch
+import org.koin.core.context.GlobalContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -85,15 +84,22 @@ fun clickToOnMonitoring(context: Context) {
 		addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 	}
 	context.startActivity(intent)
+
+	// -------- разрешение на оверлей ---------
+	if (!Settings.canDrawOverlays(context)) {
+		val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+			("package:" + context.packageName).toUri())
+		context.startActivity(intent)
+	}
 }
 
 suspend fun exportBackup(context: Context, uri: Uri) {
-	val export = ExportBackupInteractor(ClipboardDatabase.getInstance(context))
+	val export = GlobalContext.get().get<ExportBackupInteractor>()
 	export(context, uri)
 }
 
 suspend fun importBackup(context: Context, uri: Uri) {
-	val import = ImportBackupInteractor(ClipboardDatabase.getInstance(context))
+	val import =  GlobalContext.get().get<ImportBackupInteractor>()
 	import(context, uri)
 }
 
@@ -112,8 +118,10 @@ fun BackupControls(snackbarHostState: SnackbarHostState) {
 				}
 				snackbarHostState
 					.showSnackbar(
-						message = "Резервная копия успешно сохранена".takeIf { result.isSuccess }
-							?: "Ошибка создания резервной копии данных: ${result.exceptionOrNull()?.message}",
+						message = "Резервная копия успешно сохранена"
+							.takeIf { result.isSuccess }
+							?: ("Ошибка создания резервной копии данных: " +
+									"${result.exceptionOrNull()?.message}"),
 						withDismissAction = true,
 					)
 			}
@@ -129,8 +137,10 @@ fun BackupControls(snackbarHostState: SnackbarHostState) {
 					importBackup(context, uri)
 				}
 				snackbarHostState.showSnackbar(
-					message = "Восстановление данных успешно завершено".takeIf { result.isSuccess }
-						?: "Ошибка восстановления данных: ${result.exceptionOrNull()?.message}",
+					message = "Восстановление данных успешно завершено"
+						.takeIf { result.isSuccess }
+						?: ("Ошибка восстановления данных: " +
+								"${result.exceptionOrNull()?.message}"),
 					withDismissAction = true,
 				)
 			}
@@ -142,9 +152,7 @@ fun BackupControls(snackbarHostState: SnackbarHostState) {
 			val date = SimpleDateFormat(
 				"yyyy-MM-dd_HH-mm",
 				Locale.getDefault()
-			).format(
-				Date()
-			)
+			).format(Date())
 			exportLauncher.launch("backup_$date.zip")
 		},
 		title = "сохранить резервную копию",

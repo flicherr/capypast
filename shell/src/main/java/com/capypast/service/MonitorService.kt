@@ -10,10 +10,6 @@ import android.widget.Toast
 import com.capypast.service.clipboard.ForegroundActivity
 import com.capypast.service.overlay.OverlayActivity
 
-//object MonitorServiceHolder {
-//	var service: MonitorService? = null
-//}
-
 class MonitorService : AccessibilityService() {
 	private var TAG = "MonitorService"
 
@@ -45,7 +41,6 @@ class MonitorService : AccessibilityService() {
 
 	override fun onDestroy() {
 		Log.w(TAG, "Сервис уничтожен")
-//		MonitorServiceHolder.service = null
 		super.onDestroy()
 	}
 
@@ -60,7 +55,6 @@ class MonitorService : AccessibilityService() {
 
 	override fun onServiceConnected() {
 		super.onServiceConnected()
-//		MonitorServiceHolder.service = this
 
 		// Настраиваем фильтрацию событий для AccessibilityService
 		val info = AccessibilityServiceInfo().apply {
@@ -167,16 +161,6 @@ class MonitorService : AccessibilityService() {
 					heuristicClipSave(pkgName, true)
 				}
 			}
-
-//			AccessibilityEvent.TYPE_ANNOUNCEMENT,
-//			AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED -> {
-//				val text = event.text.joinToString().lowercase()
-//				val pkgName = (event.packageName ?: "unknown").toString()
-//				if (copyWords.any { word -> text.contains(word, ignoreCase = true) }) {
-//					Log.d("CopyDetect", "Подтверждено копирование")
-//					heuristicClipSave(pkgName)
-//				}
-//			}
 
 			else -> return
 		}

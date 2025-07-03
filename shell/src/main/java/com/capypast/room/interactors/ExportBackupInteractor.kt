@@ -2,7 +2,8 @@ package com.capypast.room.interactors
 
 import android.content.Context
 import android.net.Uri
-import com.capypast.room.ClipboardDatabase
+import com.capypast.room.dao.ClipDao
+import com.capypast.room.dao.TrashDao
 import com.capypast.room.entities.BackupData
 import com.capypast.room.entities.ClipType
 import com.google.gson.Gson
@@ -12,7 +13,8 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 class ExportBackupInteractor(
-	private val db: ClipboardDatabase
+	private val clipDao: ClipDao,
+	private val trashDao: TrashDao,
 ) {
 	suspend operator fun invoke(context: Context, exportPath: Uri) {
 		val gson = Gson()
@@ -24,7 +26,7 @@ class ExportBackupInteractor(
 
 		val addedImages = mutableSetOf<String>()
 		try {
-			val clipboard = db.clipDao().allItems().map { item ->
+			val clipboard = clipDao.allItems().map { item ->
 				if (item.type == ClipType.IMAGE) {
 					val originalFile = File(item.content)
 					val filename = "images/${originalFile.name}"
@@ -43,7 +45,7 @@ class ExportBackupInteractor(
 				}
 			}
 
-			val trashcan = db.trashDao().allItems().map { item ->
+			val trashcan = trashDao.allItems().map { item ->
 				if (item.type == ClipType.IMAGE) {
 					val originalFile = File(item.content)
 					val filename = "images/${originalFile.name}"

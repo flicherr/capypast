@@ -30,7 +30,7 @@ class ClipboardRepository(private val dao: ClipDao) {
 
 	suspend fun getAll(): List<ClipEntity>? = dao.allItems().toList()
 
-	suspend fun searchResult(query: String): List<ClipEntity>? = dao.searchItems(query)
+	suspend fun searchResult(query: String): List<ClipEntity>? = dao.searchItems(query).toList()
 
 	fun filterFlow(types: List<ClipType>): Pager<Int, ClipEntity> {
 		return Pager(

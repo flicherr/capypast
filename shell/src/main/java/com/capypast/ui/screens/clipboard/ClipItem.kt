@@ -26,14 +26,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +47,6 @@ import com.capypast.helper.BiometricAuthHelper
 import com.capypast.room.entities.ClipType
 import com.capypast.room.entities.ClipEntity
 import com.capypast.ui.components.ConfirmDialog
-import com.capypast.ui.theme.CapypastTheme
 import com.capypast.utils.setPrimaryClip
 import com.capypast.utils.decodeImage
 import com.capypast.viewmodel.ClipboardViewModel
@@ -67,8 +63,6 @@ import compose.icons.tablericons.Share
 import compose.icons.tablericons.Shield
 import compose.icons.tablericons.ShieldX
 import compose.icons.tablericons.Trash
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.sql.Date
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -110,7 +104,11 @@ fun ClipItem(
 					onProtected(entity)
 					menuExpanded = false
 				},
-				onError = { Toast.makeText(context, it, Toast.LENGTH_SHORT).show() }
+				onError = {
+					Toast
+						.makeText(context, it, Toast.LENGTH_SHORT)
+						.show()
+				}
 			)
 		},
 		onDismiss = {
@@ -153,8 +151,6 @@ fun ClipItem(
 					.padding(top = 0.dp, start = 10.dp, end = 10.dp, bottom = 4.dp)
 			) {
 				/** ───────────── Заголовок: иконка, дата и кнопка удаления ───────────── */
-				val context = LocalContext.current
-
 				Row(
 					verticalAlignment = Alignment.CenterVertically,
 					horizontalArrangement = Arrangement.SpaceBetween,
@@ -188,7 +184,9 @@ fun ClipItem(
 					) {
 						IconButton(
 							onClick = {
-								if (!viewModel.protectedClips.contains(entity) && entity.isProtected) {
+								if (!viewModel.protectedClips.contains(entity)
+									&& entity.isProtected
+								) {
 									biometricAuthenticator.authenticate(
 										title = "Подтвердите доступ",
 										onSuccess = {
@@ -252,7 +250,8 @@ fun ClipItem(
 								) {
 									Icon(
 										imageVector =
-											TablerIcons.Pinned.takeIf { !entity.pinned }
+											TablerIcons.Pinned
+												.takeIf { !entity.pinned }
 												?: TablerIcons.PinnedOff,
 										contentDescription = "Закреп",
 									)
@@ -263,7 +262,8 @@ fun ClipItem(
 								) {
 									Icon(
 										imageVector =
-											TablerIcons.Shield.takeIf { !entity.isProtected }
+											TablerIcons.Shield
+												.takeIf { !entity.isProtected }
 												?: TablerIcons.ShieldX,
 										contentDescription = "Защищённый доступ",
 									)

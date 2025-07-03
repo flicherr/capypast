@@ -17,12 +17,22 @@ fun clipShare(context: Context, item: ClipEntity) {
 				type = "text/plain"
 				putExtra(Intent.EXTRA_TEXT, item.content)
 			}
-			context.startActivity(Intent.createChooser(shareIntent, "Поделиться..."))
+			context.startActivity(
+				Intent
+					.createChooser(shareIntent, "Поделиться...")
+			)
 		}
 
 		ClipType.IMAGE -> {
-			val file = File(context.filesDir, "${item.content.toUri().lastPathSegment}")
-			val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
+			val file = File(
+				context.filesDir,
+				"${item.content.toUri().lastPathSegment}"
+			)
+			val uri = FileProvider.getUriForFile(
+				context,
+				"${context.packageName}.fileprovider",
+				file
+			)
 			Log.i("ClipShare", uri.toString())
 			val shareIntent = Intent(Intent.ACTION_SEND).apply {
 				type = "image/png"
@@ -32,15 +42,17 @@ fun clipShare(context: Context, item: ClipEntity) {
 
 			// Разрешение временного доступа, если используется FileProvider
 			context.grantUriPermission(
-				context.packageManager.resolveActivity(
-					shareIntent,
-					PackageManager.MATCH_DEFAULT_ONLY
-				)?.activityInfo?.packageName ?: "",
-				uri,
-				Intent.FLAG_GRANT_READ_URI_PERMISSION
+				context.packageManager
+					.resolveActivity(
+						shareIntent,
+						PackageManager.MATCH_DEFAULT_ONLY
+					)?.activityInfo?.packageName
+					?: "", uri, Intent.FLAG_GRANT_READ_URI_PERMISSION
 			)
 
-			context.startActivity(Intent.createChooser(shareIntent, "Поделиться..."))
+			context.startActivity(
+				Intent.createChooser(shareIntent, "Поделиться...")
+			)
 		}
 	}
 }

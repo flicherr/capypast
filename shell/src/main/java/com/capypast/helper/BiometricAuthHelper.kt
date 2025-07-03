@@ -25,23 +25,22 @@ class BiometricAuthHelper(
 			)
 			.build()
 
-		val biometricPrompt = BiometricPrompt(
+		BiometricPrompt(
 			activity,
 			ContextCompat.getMainExecutor(context),
 			object : BiometricPrompt.AuthenticationCallback() {
-				override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-					onSuccess()
-				}
+				override fun onAuthenticationSucceeded(
+					result: BiometricPrompt.AuthenticationResult
+				) = onSuccess()
 
-				override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-					onError(errString.toString())
-				}
+				override fun onAuthenticationError(
+					errorCode: Int,
+					errString: CharSequence
+				) = onError(errString.toString())
 
-				override fun onAuthenticationFailed() {
+				override fun onAuthenticationFailed() =
 					onError("Аутентификация не пройдена")
-				}
-			})
-
-		biometricPrompt.authenticate(promptInfo)
+			}
+		).authenticate(promptInfo)
 	}
 }

@@ -11,8 +11,6 @@ import com.capypast.room.entities.ClipEntity
 import com.capypast.room.entities.ClipType
 import com.capypast.room.interactors.MoveToTrashInteractor
 import com.capypast.room.repositories.ClipboardRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,14 +38,16 @@ class ClipboardViewModel(
 
 	fun addReadAccessClip(clip: ClipEntity) {
 		protectedClips = protectedClips.toMutableSet().apply {
-				add(clip)
+			add(clip)
 		}
 	}
+
 	fun removeReadAccessClip(clip: ClipEntity) {
 		protectedClips = protectedClips.toMutableSet().apply {
 			remove(clip)
 		}
 	}
+
 	fun clearReadAccessClips() {
 		protectedClips = protectedClips.toMutableSet().apply {
 			clear()
@@ -70,24 +70,21 @@ class ClipboardViewModel(
 			}
 		}.cachedIn(viewModelScope)
 
-	fun moveToTrash(clip: ClipEntity) {
-		viewModelScope.launch {
+	fun moveToTrash(clip: ClipEntity) = viewModelScope
+		.launch {
 			toTrash(clip)
 		}
-	}
 
-	fun setPinned(clip: ClipEntity) {
-		viewModelScope.launch {
+	fun setPinned(clip: ClipEntity) = viewModelScope
+		.launch {
 			repo.setPinned(clip.id, !clip.pinned)
 		}
-	}
 
-	fun setProtected(clip: ClipEntity) {
-		viewModelScope.launch {
+
+	fun setProtected(clip: ClipEntity) = viewModelScope
+		.launch {
 			repo.setProtected(clip.id, !clip.isProtected)
 		}
-	}
-
 
 	/*------------------------ search -----------------------*/
 	fun toggleSearchBarAction() {
@@ -100,48 +97,45 @@ class ClipboardViewModel(
 		searchQuery.value = query
 	}
 
-
 	/*------------------------ filter -----------------------*/
-	fun toggleFilter(type: ClipType) {
-		filter.update { current ->
+	fun toggleFilter(type: ClipType) = filter
+		.update { current ->
 			if (type in current) current - type else current + type
 		}
-	}
-
 
 	/*---------------------- selected ----------------------*/
 	fun selectionMode(): Boolean = isSelectionMode
 
 	fun toggleSelection(item: ClipEntity) {
-		selectedItems = selectedItems.toMutableSet().apply {
-			if (contains(item)) {
-				remove(item)
-			} else {
-				add(item)
+		selectedItems = selectedItems
+			.toMutableSet()
+			.apply {
+				if (contains(item)) {
+					remove(item)
+				} else {
+					add(item)
+				}
 			}
-		}
 	}
 
-	fun selectAll() {
-		CoroutineScope(Dispatchers.Main).launch {
+	fun selectAll() = viewModelScope
+		.launch {
 			selectedItems =
 				repo.getAll()?.toSet()
 					.takeIf { searchQuery.value.isNullOrBlank() }
 					?: repo.searchResult(searchQuery.toString())?.toSet()
 							?: return@launch
 		}
-	}
 
 	fun clearSelection() {
 		selectedItems = emptySet()
 	}
 
-	fun deleteSelected() {
-		viewModelScope.launch {
+	fun deleteSelected() = viewModelScope
+		.launch {
 			for (clip in selectedItems.toList()) {
 				moveToTrash(clip)
 			}
 			selectedItems = emptySet()
 		}
-	}
 }

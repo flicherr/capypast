@@ -9,10 +9,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.capypast.room.entities.ClipEntity
 import com.capypast.room.repositories.ClipboardRepository
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 
 class OverlayViewModel(
 	repo: ClipboardRepository,
@@ -20,10 +17,9 @@ class OverlayViewModel(
 	var protectedClip: ClipEntity? by mutableStateOf(null)
 		private set
 
-	val itemsFlow: Flow<PagingData<ClipEntity>> =
-		repo.clipsFlow()
-			.flow
-			.cachedIn(viewModelScope)
+	val itemsFlow: Flow<PagingData<ClipEntity>> = repo.clipsFlow()
+		.flow
+		.cachedIn(viewModelScope)
 
 	fun readAccess(clip: ClipEntity?) {
 		protectedClip = clip

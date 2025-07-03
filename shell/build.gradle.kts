@@ -1,5 +1,6 @@
 import org.gradle.api.JavaVersion.VERSION_17
 import org.gradle.kotlin.dsl.implementation
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
@@ -39,8 +40,10 @@ android {
         sourceCompatibility = VERSION_17
         targetCompatibility = VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_17)
+        }
     }
 
     buildFeatures {
@@ -58,12 +61,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
 
     implementation(libs.androidx.appcompat)
-    implementation("androidx.biometric:biometric:1.1.0")
-
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.1")
-    implementation("androidx.savedstate:savedstate:1.3.0")
-    implementation("androidx.compose.ui:ui:1.8.3")
+    implementation(libs.androidx.biometric)
 
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
@@ -82,6 +80,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    implementation(project.dependencies.platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.androidx.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

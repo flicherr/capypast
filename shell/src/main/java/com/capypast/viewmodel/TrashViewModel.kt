@@ -16,16 +16,15 @@ class TrashViewModel(
 	private val repo: TrashRepository,
 	private val restoreInteract: RestoreFromTrashInteractor
 ) : ViewModel() {
-	val trashPagingData: StateFlow<PagingData<TrashEntity>> =
-		repo
-			.trashFlow()
-			.flow
-			.cachedIn(viewModelScope)
-			.stateIn(
-				scope = viewModelScope,
-				started = SharingStarted.Lazily,
-				initialValue = PagingData.empty()
-			)
+	val trashPagingData: StateFlow<PagingData<TrashEntity>> = repo
+		.trashFlow()
+		.flow
+		.cachedIn(viewModelScope)
+		.stateIn(
+			scope = viewModelScope,
+			started = SharingStarted.Lazily,
+			initialValue = PagingData.empty()
+		)
 
 	val enabledTrash: StateFlow<Boolean> = repo
 		.exists()
@@ -36,27 +35,23 @@ class TrashViewModel(
 			initialValue = false
 		)
 
-	fun restore(trashItem: TrashEntity) {
-		viewModelScope.launch {
+	fun restore(trashItem: TrashEntity) = viewModelScope
+		.launch {
 			restoreInteract(trashItem)
 		}
-	}
 
-	fun restoreAll() {
-		viewModelScope.launch {
+	fun restoreAll() = viewModelScope
+		.launch {
 			restoreInteract()
 		}
-	}
 
-	fun delete(trashItem: TrashEntity) {
-		viewModelScope.launch {
+	fun delete(trashItem: TrashEntity) = viewModelScope
+		.launch {
 			repo.delete(trashItem)
 		}
-	}
 
-	fun deleteAll() {
-		viewModelScope.launch {
+	fun deleteAll() = viewModelScope
+		.launch {
 			repo.clear()
 		}
-	}
 }

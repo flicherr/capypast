@@ -2,7 +2,8 @@ package com.capypast.room.interactors
 
 import android.content.Context
 import android.net.Uri
-import com.capypast.room.ClipboardDatabase
+import com.capypast.room.dao.ClipDao
+import com.capypast.room.dao.TrashDao
 import com.capypast.room.entities.BackupData
 import com.capypast.room.entities.ClipType
 import com.capypast.utils.saveImage
@@ -13,7 +14,8 @@ import java.io.File
 import java.util.zip.ZipInputStream
 
 class ImportBackupInteractor(
-	private val db: ClipboardDatabase
+	private val clipDao: ClipDao,
+	private val trashDao: TrashDao,
 ) {
 	suspend operator fun invoke(context: Context, importPath: Uri) {
 		val resolver = context.contentResolver
@@ -59,7 +61,7 @@ class ImportBackupInteractor(
 			} else item
 		}
 
-		db.clipDao().insertSome(updatedClipboard)
-		db.trashDao().insertSome(updatedTrashcan)
+		clipDao.insertSome(updatedClipboard)
+		trashDao.insertSome(updatedTrashcan)
 	}
 }

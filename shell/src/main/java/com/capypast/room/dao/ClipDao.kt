@@ -56,7 +56,7 @@ interface ClipDao {
         WHERE (content LIKE '%' || :query || '%' OR tags LIKE '%' || :query || '%')
         ORDER BY pinned DESC, timestamp DESC
     """)
-	suspend fun searchItems(query: String): List<ClipEntity>?
+	suspend fun searchItems(query: String): List<ClipEntity>
 
 	@Query("SELECT * FROM clipboard WHERE type IN (:types) ORDER BY pinned DESC, timestamp DESC")
 	fun itemsByTypes(types: List<ClipType>): PagingSource<Int, ClipEntity>

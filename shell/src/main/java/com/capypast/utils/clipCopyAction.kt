@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import com.capypast.room.entities.ClipType
 import java.io.File
 
@@ -25,12 +24,8 @@ fun setPrimaryClip(
 		ClipType.TEXT -> {
 			clipboardManager.setPrimaryClip(
 				ClipData
-					.newPlainText(
-						copiedClipLabel,
-						content
-					)
+					.newPlainText(copiedClipLabel,content)
 			)
-
 		}
 
 		ClipType.IMAGE -> {

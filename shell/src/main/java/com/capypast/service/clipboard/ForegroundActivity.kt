@@ -9,13 +9,7 @@ import android.view.Gravity
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.lifecycleScope
-import com.capypast.room.ClipboardDatabase
 import com.capypast.room.entities.ClipEntity
 import com.capypast.room.entities.ClipType
 import com.capypast.room.repositories.ClipboardRepository
@@ -25,22 +19,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.android.ext.android.inject
 import java.io.File
 import java.io.FileOutputStream
 import java.security.MessageDigest
 
 class ForegroundActivity : ComponentActivity() {
-
-	private lateinit var database: ClipboardDatabase
-	private lateinit var repository: ClipboardRepository
+	private val repository: ClipboardRepository by inject()
 
 	private var TAG: String = "ClipboardActivity"
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-
-		database = ClipboardDatabase.Companion.getInstance(this)
-		repository = ClipboardRepository(database.clipDao())
 
 		window.apply {
 			clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
@@ -90,7 +80,9 @@ class ForegroundActivity : ComponentActivity() {
 					} else {
 						Log.d(
 							TAG,
-							"Буфер: '$text' не соответствует ожидаемому тексту: '$expectedText'."
+							"Буфер: " +
+									"'$text' не соответствует ожидаемому тексту: " +
+									"'$expectedText'."
 						)
 						return@withContext
 					}
@@ -111,7 +103,11 @@ class ForegroundActivity : ComponentActivity() {
 				}
 			}
 		} catch (e: Exception) {
-			Log.e(TAG, "Ошибка при сохранении элемента буфера в базу: ${e.message}", e)
+			Log.e(
+				TAG,
+				"Ошибка при сохранении элемента буфера в базу: ${e.message}",
+				e
+			)
 		}
 	}
 
@@ -131,8 +127,8 @@ class ForegroundActivity : ComponentActivity() {
 		withContext(Dispatchers.IO) {
 			val lastItem = repository.lastClip()
 			val copiedImg = File(uri.toString())
-			var lastItemImg = if (lastItem != null && lastItem.type == ClipType.IMAGE) {
-				File(lastItem.content.toString())
+			val lastItemImg = if (lastItem != null && lastItem.type == ClipType.IMAGE) {
+				File(lastItem.content)
 			} else {
 				null
 			}
@@ -150,14 +146,14 @@ class ForegroundActivity : ComponentActivity() {
 			}
 		}
 
-	private fun pkgName() : String = intent
+	private fun pkgName(): String = intent
 		.getStringExtra("source_package") ?: "unknown"
 
 	private fun isCopyClipHistory(clip: ClipData): Boolean =
 		clip.description.label == copiedClipLabel
 
-	private fun saveImageAndGetPath(uri: Uri): String? {
-		return try {
+	private fun saveImageAndGetPath(uri: Uri): String? =
+		try {
 			val filename = "clip_${System.currentTimeMillis()}.png"
 			val file = File(filesDir, filename)
 
@@ -172,7 +168,6 @@ class ForegroundActivity : ComponentActivity() {
 			Log.e("contentResolver", "Ошибка сохранения изображения", e)
 			null
 		}
-	}
 
 	fun File.sha256(): String {
 		val bytes = MessageDigest
@@ -181,7 +176,6 @@ class ForegroundActivity : ComponentActivity() {
 		return bytes.joinToString("") { "%02x".format(it) }
 	}
 
-	fun imgAreIdentical(file1: File, file2: File): Boolean {
-		return file1.sha256() == file2.sha256()
-	}
+	fun imgAreIdentical(file1: File, file2: File): Boolean =
+		file1.sha256() == file2.sha256()
 }

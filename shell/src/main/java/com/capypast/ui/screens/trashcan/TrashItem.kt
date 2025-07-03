@@ -19,13 +19,11 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,7 +44,6 @@ import compose.icons.tablericons.LetterCase
 import compose.icons.tablericons.Package
 import compose.icons.tablericons.Photo
 import compose.icons.tablericons.RotateClockwise2
-import kotlinx.coroutines.launch
 import java.sql.Date
 
 @Composable
@@ -57,42 +54,21 @@ fun TrashItem(
 ) {
 	var confirmRestore by remember { mutableStateOf(false) }
 	var confirmDelete by remember { mutableStateOf(false) }
-	val scope = rememberCoroutineScope()
 
 	ConfirmDialog(
 		show = confirmRestore,
 		message =
 			"Вы действительно хотите восстановить выбранный элемент?",
-		onConfirm = {
-			onRestore(entity)
-			scope.launch {
-//				snackbarHostState.showSnackbar(
-//					message = "Элемент восстановлен",
-//					withDismissAction = true,
-//				)
-			}
-		},
-		onDismiss = {
-			confirmRestore = false
-		}
+		onConfirm = { onRestore(entity) },
+		onDismiss = { confirmRestore = false }
 	)
 
 	ConfirmDialog(
 		show = confirmDelete,
 		message =
 			"Вы действительно хотите безвозвратно удалить выбранный элемент?",
-		onConfirm = {
-			onDelete(entity)
-			scope.launch {
-//				snackbarHostState.showSnackbar(
-//					message = "Элемент удалён",
-//					withDismissAction = true,
-//				)
-			}
-		},
-		onDismiss = {
-			confirmDelete = false
-		}
+		onConfirm = { onDelete(entity) },
+		onDismiss = { confirmDelete = false }
 	)
 
 	Card(
@@ -129,7 +105,8 @@ fun TrashItem(
 					Text(
 						text = DateFormat.getDateTimeInstance()
 							.format(Date(entity.timestamp)),
-						style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium)
+						style = MaterialTheme.typography.bodySmall
+							.copy(fontWeight = FontWeight.Medium)
 					)
 				}
 				Row(

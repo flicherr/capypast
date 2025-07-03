@@ -1,29 +1,25 @@
 [versions]
-agp = "8.9.2"
-appcompatVersion = "1.6.1"
+agp = "8.11.0"
 biometric = "1.1.0"
-kotlin = "2.1.20"
+kotlin = "2.2.0"
+koin-bom = "4.1.0"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.7"
+lifecycleRuntimeKtx = "2.9.1"
 activityCompose = "1.10.1"
-composeBom = "2025.04.01"
-lifecycleRuntimeKtxVersion = "2.7.0"
-navigationCompose = "2.8.9"
-appcompat = "1.7.0"
-material = "1.12.0"
+composeBom = "2025.06.01"
+navigationCompose = "2.9.1"
+appcompat = "1.7.1"
 pagingCompose = "3.3.6"
-roomCompiler = "2.7.1"
-roomCompilerVersion = "2.7.1"
-roomRuntime = "2.7.1"
+roomCompiler = "2.7.2"
+roomCompilerVersion = "2.7.2"
+roomRuntime = "2.7.2"
 
 [libraries]
-androidx-appcompat-v161 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
-androidx-lifecycle-runtime-ktx-v270 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingCompose" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingCompose" }
@@ -43,8 +39,10 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomCompiler" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+koin-core = { module = "io.insert-koin:koin-core" }
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose" }
 room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomCompilerVersion" }
 
 [plugins]

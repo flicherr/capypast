@@ -1,6 +1,5 @@
 package com.capypast.ui.screens.clipboard
 
-import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +11,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -21,34 +19,28 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.capypast.ui.components.ButtonCloseSearch
 import com.capypast.ui.components.ButtonSearch
 import com.capypast.ui.components.ButtonToSettings
 import com.capypast.ui.components.ConfirmDialog
 import com.capypast.ui.components.TitleAppBar
 import com.capypast.viewmodel.ClipboardViewModel
-import com.capypast.viewmodel.factories.ClipboardViewModelFactory
 import compose.icons.TablerIcons
 import compose.icons.tablericons.Search
 import compose.icons.tablericons.SquareCheck
 import compose.icons.tablericons.SquareDot
 import compose.icons.tablericons.Trash
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
-@SuppressLint("CoroutineCreationDuringComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppBar(
@@ -59,13 +51,9 @@ fun AppBar(
 	val focusRequester = remember { FocusRequester() }
 	val keyboardCtrl = LocalSoftwareKeyboardController.current
 
-	val scope = rememberCoroutineScope()
 	var confirmRemove by remember { mutableStateOf(false) }
 
-	val context = LocalContext.current
-	val viewModel: ClipboardViewModel = viewModel(
-		factory = ClipboardViewModelFactory(context)
-	)
+	val viewModel: ClipboardViewModel = koinViewModel()
 
 	BackHandler(enabled = viewModel.selectionMode()) {
 		viewModel.clearSelection()
@@ -91,12 +79,6 @@ fun AppBar(
 			"Вы действительно хотите переместить выбранные элементы в корзину?",
 		onConfirm = {
 			viewModel.deleteSelected()
-			scope.launch {
-//				snackbarHostState.showSnackbar(
-//					message = "Все элементы истории перемещены в корзину",
-//					withDismissAction = true,
-//				)
-			}
 		},
 		onDismiss = {
 			confirmRemove = false
