@@ -5,12 +5,12 @@ import com.capypast.di.capypastModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.GlobalContext.startKoin
 
-class CapyPast : Application() {
+class Capypast : Application() {
 	override fun onCreate() {
 		super.onCreate()
 
 		startKoin {
-			androidContext(this@CapyPast)
+			androidContext(this@Capypast)
 			modules(capypastModule)
 		}
 	}

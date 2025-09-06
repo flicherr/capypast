@@ -6,6 +6,7 @@ import android.content.Intent
 import android.provider.Settings
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityWindowInfo
 import android.widget.Toast
 import com.capypast.service.clipboard.ForegroundActivity
 import com.capypast.service.overlay.OverlayActivity
@@ -17,7 +18,8 @@ class MonitorService : AccessibilityService() {
 	 * Мониторинг тройного тапа по полю ввода в сторонних приложениях
 	 * для вызова оверлея с историей буфера обмена
 	 */
-	val tapTimestamps = mutableListOf<Long>()
+	private val tapTimestamps = mutableListOf<Long>()
+	private var hiddenFloatingButton = true
 
 	/**
 	 * Мониторинг пользовательских действий копирования фрагментов данных
@@ -75,6 +77,7 @@ class MonitorService : AccessibilityService() {
 		try {
 			detectCopy(event)
 			detectCallOverlay(event)
+			actionFloatingButton(event)
 		} catch (e: Exception) {
 			Log.i(TAG, "${e.localizedMessage}")
 		}
@@ -163,6 +166,38 @@ class MonitorService : AccessibilityService() {
 			}
 
 			else -> return
+		}
+	}
+
+	private fun actionFloatingButton(event: AccessibilityEvent) {
+		if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED ||
+			event.eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED) {
+
+			val inputMethodVisible =
+				windows.any { it.type == AccessibilityWindowInfo.TYPE_INPUT_METHOD }
+			if (hiddenFloatingButton) {
+				if (inputMethodVisible) {
+					Toast
+						.makeText(
+							applicationContext,
+							"хуяк",
+							Toast.LENGTH_SHORT
+						)
+						.show()
+					hiddenFloatingButton = false
+				}
+			} else {
+				if (!inputMethodVisible) {
+					Toast
+						.makeText(
+							applicationContext,
+							"отхуяк",
+							Toast.LENGTH_SHORT
+						)
+						.show()
+					hiddenFloatingButton = true
+				}
+			}
 		}
 	}
 

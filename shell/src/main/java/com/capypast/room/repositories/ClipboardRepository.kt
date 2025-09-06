@@ -12,9 +12,11 @@ class ClipboardRepository(private val dao: ClipDao) {
 
 	suspend fun upsert(clip: ClipEntity) = dao.upsert(clip)
 
-	suspend fun setPinned(id: Long, pinned: Boolean) = dao.setPinned(id, pinned)
+	suspend fun setPinned(id: Long, pinned: Boolean) =
+		dao.setPinned(id, pinned)
 
-	suspend fun setProtected(id: Long, isProtected: Boolean) = dao.setProtected(id, isProtected)
+	suspend fun setProtected(id: Long, isProtected: Boolean) =
+		dao.setProtected(id, isProtected)
 
 	suspend fun lastClip() = dao.lastClip()
 
@@ -30,7 +32,8 @@ class ClipboardRepository(private val dao: ClipDao) {
 
 	suspend fun getAll(): List<ClipEntity>? = dao.allItems().toList()
 
-	suspend fun searchResult(query: String): List<ClipEntity>? = dao.searchItems(query).toList()
+	suspend fun searchResult(query: String): List<ClipEntity>? =
+		dao.searchItems(query).toList()
 
 	fun filterFlow(types: List<ClipType>): Pager<Int, ClipEntity> {
 		return Pager(
@@ -41,7 +44,7 @@ class ClipboardRepository(private val dao: ClipDao) {
 
 	fun filterSearch(types: List<ClipType>, query: String): Pager<Int, ClipEntity> {
 		return Pager(
-			config = PagingConfig(pageSize = 44),
+			config = PagingConfig(pageSize = 64),
 			pagingSourceFactory = { dao.itemsByTypesSearch(types, query) }
 		)
 	}

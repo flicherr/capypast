@@ -21,7 +21,7 @@ class RestoreFromTrashInteractor(
 				type        = trash.type,
 				content     = trash.content,
 				pinned      = trash.pinned,
-				isProtected   = trash.isProtected,
+				isProtected = trash.isProtected,
 				tags        = trash.tags,
 			)
 			clipDao.insert(clip)
@@ -36,7 +36,7 @@ class RestoreFromTrashInteractor(
 				type        = trash.type,
 				content     = trash.content,
 				pinned      = trash.pinned,
-				isProtected   = trash.isProtected,
+				isProtected = trash.isProtected,
 				tags        = trash.tags,
 			)
 			clipDao.insert(clip)
